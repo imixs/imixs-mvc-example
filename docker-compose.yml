@@ -1,0 +1,23 @@
+postgres:
+  image: postgres:9.6.1
+  environment:
+    POSTGRES_PASSWORD: adminadmin
+    POSTGRES_DB: workflow-db
+
+imixssample:
+  image: imixs/imixs-mvc-sample
+  environment:
+    WILDFLY_PASS: adminadmin
+    DEBUG: "true"
+  ports:
+    - "8080:8080"
+    - "8787:8787"
+    - "9990:9990"
+  links: 
+    - postgres:postgres
+  volumes:
+      - ~/eclipse_oxygen/imixs-workflow/imixs-mvc-example/src/docker/.deployments:/opt/wildfly/standalone/deployments/
+ 
+
+    
+ 

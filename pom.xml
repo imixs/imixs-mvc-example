@@ -1,0 +1,187 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.imixs.application</groupId>
+	<artifactId>imixs-mvc-example</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+
+	<name>Imixs Workflow MVC Sample Application</name>
+	<description>Imixs Workflow MVC Sample Application </description>
+	<url>https://github.com/imixs/imixs-mvc-example</url>
+	<organization>
+		<name>Imixs Software Solutions GmbH</name>
+		<url>http://www.imixs.com</url>
+	</organization>
+	<inceptionYear>2017</inceptionYear>
+	<developers>
+		<developer>
+			<id>rsoika</id>
+			<name>Ralph Soika</name>
+			<email>ralph.soika@imixs.com</email>
+			<url>http://blog.imixs.org/</url>
+			<organization>Imixs Software Solutions GmbH</organization>
+			<organizationUrl>http://www.imixs.com</organizationUrl>
+			<roles>
+				<role>developer</role>
+				<role>testing</role>
+			</roles>
+			<timezone>2</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/imixs/imixs-mvc-example.git</connection>
+		<developerConnection>scm:git:https://github.com/imixs/imixs-mvc-example.git</developerConnection>
+		<url>https://github.com/imixs/imixs-mvc-example/</url>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/imixs/imixs-mvc-example/issues</url>
+	</issueManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.imixs.workflow.version>4.1.5-SNAPSHOT</org.imixs.workflow.version>
+		<custom.webResources>src/main/webapp</custom.webResources>
+		<custom.unpackTypes>war</custom.unpackTypes>
+		<lucene.version>6.3.0</lucene.version>
+	</properties>
+
+
+	<repositories>
+		<!-- Sonatype Snapshot repository -->
+		<repository>
+			<id>sonatype-snaptshots</id>
+			<name>Sonatype Snapshot repository</name>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+	<build>
+		<resources>
+			<!-- enable resource filtering for multi language version -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>${custom.webResources}</directory>
+							<includes>
+								<include>**/WEB-INF/*</include>
+								<include>/src/main/resources/*</include>
+								<!-- include any other file types you want to filter -->
+							</includes>
+						</resource>
+					</webResources>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+
+
+			<!-- relase management -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- JEE Dependencies -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+
+
+		<dependency>
+			<groupId>javax.mvc</groupId>
+			<artifactId>javax.mvc-api</artifactId>
+			<version>1.0-edr2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.ozark</groupId>
+			<artifactId>ozark</artifactId>
+			<version>1.0.0-m02</version>
+		</dependency>
+
+
+
+
+
+
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>2.23.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext.cdi</groupId>
+			<artifactId>jersey-cdi1x</artifactId>
+			<version>2.23.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-bean-validation</artifactId>
+			<version>2.23.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-validator</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Imixs Workflow <dependency> <groupId>org.imixs.workflow</groupId> 
+			<artifactId>imixs-workflow-engine</artifactId> <version>${org.imixs.workflow.version}</version> 
+			</dependency> <dependency> <groupId>org.imixs.workflow</groupId> <artifactId>imixs-workflow-jax-rs</artifactId> 
+			<version>${org.imixs.workflow.version}</version> </dependency> <dependency> 
+			<groupId>org.imixs.workflow</groupId> <artifactId>imixs-workflow-faces</artifactId> 
+			<version>${org.imixs.workflow.version}</version> </dependency> -->
+
+		<!-- Apache Lucene <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-core</artifactId> 
+			<version>${lucene.version}</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-analyzers-common</artifactId> <version>${lucene.version}</version> 
+			</dependency> <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-queryparser</artifactId> 
+			<version>${lucene.version}</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-codecs</artifactId> <version>${lucene.version}</version> 
+			</dependency> -->
+
+	</dependencies>
+</project>
+</project>
