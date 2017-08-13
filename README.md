@@ -1,6 +1,6 @@
 # imixs-mvc-example
 
-** NOTE: THIS IS A DRAFT VERSION **
+#### NOTE: THIS IS AN EARLY DRAFT VERSION 
 
 The Imixs-mvc-example provides a simple web application using the imixs workflow engine.
 You can take this application as a scaffolding for your own web business application based on the [Imixs-Workflow project](http://www.imixs.org).
