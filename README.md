@@ -7,7 +7,9 @@ You can take this application as a scaffolding for your own web business applica
 
 ## Run on Wildfly
 
-See: 
+This project is based on wildfly. As Ozark is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. The deployment is described [here](ozark_wildfly.md).
+
+Find also additional help here: 
 
 	http://javaakademie.de/blog/java-ee-8-mvc-ozark-wildfly-tomcat
 	
@@ -56,4 +58,5 @@ Now you can start the application. The workflow engine needs a SQL Database. Bot
 	docker-compose up
 
 See the docker-compose.yml file for details
+
 
