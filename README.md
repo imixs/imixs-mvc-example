@@ -2,12 +2,12 @@
 
 #### NOTE: THIS IS AN EARLY DRAFT VERSION 
 
-The Imixs-mvc-example provides a simple web application using the imixs workflow engine.
+The Imixs-mvc-example provides a simple web application using the Imixs-Workflow engine.
 You can take this application as a scaffolding for your own web business application based on the [Imixs-Workflow project](http://www.imixs.org).
 
 ## Run on Wildfly
 
-This project is based on wildfly. As Ozark is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. The deployment is described [here](ozark_wildfly.md).
+This project is based on wildfly. As [Ozark](https://github.com/mvc-spec/ozark) is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. The deployment is described [here](ozark_wildfly.md).
 
 Find also additional help here: 
 
@@ -47,7 +47,7 @@ Before you can start the container, build the application from sources
 	
 ## 2. Build the Docker Image
 
-After you have build the application, you can build the Docker image with the follwong command:
+After you have build the application, you can build the Docker image with the following command:
 
 	docker build --tag=imixs/imixs-mvc-sample .
  
