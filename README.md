@@ -26,7 +26,7 @@ You can also download the application from the [latest release](https://github.c
 ## 2. Run the Application
 After deployment you can start the sample application from:
 
-	http://localhost:8080/imixs-mvc-example-0.0.1-SNAPSHOT/getting-started/hello
+	http://localhost:8080/workflow/api/hello
 
 
 
