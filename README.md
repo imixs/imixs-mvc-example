@@ -20,23 +20,8 @@ The Imixs-mvc-example  is based on Maven to build the project from sources run
     
 You can also download the application from the [latest release](https://github.com/imixs/imixs-mvc-example/releases).    
 
-## 2. Deploy the Application
-To deploy the application successfully, the application sever need to provide a valid database pool named 'jdbc/workflow-db' and a JAAS security configuration named 'imixsrealm'. You will find an installation guide [here](http://www.imixs.org/doc/sampleapplication.html).
 
-### Setup Security Roles
-The security concept of imixs-workflow defines default roles:
-
-* org.imixs.ACCESSLEVEL.NOACCESS
-* org.imixs.ACCESSLEVEL.READACCESS
-* org.imixs.ACCESSLEVEL.AUTHORACCESS
-* org.imixs.ACCESSLEVEL.EDITORACCESS
-* org.imixs.ACCESSLEVEL.MANAGERACCESS
-
-Each user accessing the Imixs-Workflow engine should be mapped to one of these roles. The user roles can be mapped by configuration from the application server. You will find more information about the general ACL concept of the [Imixs-Workflow Deployent guide](http://www.imixs.org/doc/deployment/security.html).
-
-__NOTE:__ The Imixs-jsf-example is tested with JBoss/Wildfly and GlassFish4/Payara Servers.
-
-## 3. Run the Application
+## 2. Run the Application
 After deployment you can start the sample application from:
 
 	http://localhost:8080/imixs-mvc-example-0.0.1-SNAPSHOT/getting-started/hello
@@ -72,16 +57,3 @@ Now you can start the application. The workflow engine needs a SQL Database. Bot
 
 See the docker-compose.yml file for details
 
-The Docker container creates user accounts for testing with the following userid/password:
-
-    admin=adminpassword
-    manfred=password
-    anna=password
-
-After your application was started, upload the ticket.bpmn exampl model:
-
-	curl --user admin:adminpassword --request POST -Tticket.bpmn http://localhost:8080/workflow/rest-service/model/bpmn
-
-and run the application in a web browser:	
-
-	http://localhost:8080/workflow/

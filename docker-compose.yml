@@ -16,7 +16,7 @@ imixssample:
   links: 
     - postgres:postgres
   volumes:
-      - ~/eclipse_oxygen/imixs-workflow/imixs-mvc-example/src/docker/.deployments:/opt/wildfly/standalone/deployments/
+      - ~/git/imixs-mvc-example/src/docker/.deployments:/opt/wildfly/standalone/deployments/
  
 
     
