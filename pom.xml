@@ -141,10 +141,6 @@
 		</dependency>
 
 
-
-
-
-
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -167,21 +163,5 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Imixs Workflow <dependency> <groupId>org.imixs.workflow</groupId> 
-			<artifactId>imixs-workflow-engine</artifactId> <version>${org.imixs.workflow.version}</version> 
-			</dependency> <dependency> <groupId>org.imixs.workflow</groupId> <artifactId>imixs-workflow-jax-rs</artifactId> 
-			<version>${org.imixs.workflow.version}</version> </dependency> <dependency> 
-			<groupId>org.imixs.workflow</groupId> <artifactId>imixs-workflow-faces</artifactId> 
-			<version>${org.imixs.workflow.version}</version> </dependency> -->
-
-		<!-- Apache Lucene <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-core</artifactId> 
-			<version>${lucene.version}</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
-			<artifactId>lucene-analyzers-common</artifactId> <version>${lucene.version}</version> 
-			</dependency> <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-queryparser</artifactId> 
-			<version>${lucene.version}</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
-			<artifactId>lucene-codecs</artifactId> <version>${lucene.version}</version> 
-			</dependency> -->
-
 	</dependencies>
-</project>
 </project>
