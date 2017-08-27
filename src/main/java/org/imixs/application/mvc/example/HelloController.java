@@ -19,7 +19,7 @@ public class HelloController {
 	
 	@GET
 	public String render() {
-		models.put("message", "Hello world!");
+		models.put("message", "Hello world3!");
 		return "/WEB-INF/views/hello.jsp";
 	}
 }

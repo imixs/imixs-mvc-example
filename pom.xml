@@ -127,7 +127,24 @@
 		</dependency>
 
 
+ <dependency>
+    <groupId>javax.mvc</groupId>
+    <artifactId>javax.mvc-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>org.mvc-spec.ozark</groupId>
+    <artifactId>ozark-core</artifactId>
+    <version>1.0.0-m03-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>org.mvc-spec.ozark</groupId>
+    <artifactId>ozark-resteasy</artifactId>
+    <version>1.0.0-m03-SNAPSHOT</version>
+  </dependency>
 
+
+<!-- 
 
 		<dependency>
 			<groupId>javax.mvc</groupId>
@@ -139,7 +156,6 @@
 			<artifactId>ozark</artifactId>
 			<version>1.0.0-m02</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
@@ -162,6 +178,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		 -->
 
 	</dependencies>
 </project>
