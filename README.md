@@ -9,7 +9,7 @@ You can take this application as a scaffolding for your own web business applica
 
 This project is based on wildfly. As [Ozark](https://github.com/mvc-spec/ozark) is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. The deployment is described [here](ozark_wildfly.md).
 
-Find also additional help here: 
+Find also additional help here:  
 
 	http://javaakademie.de/blog/java-ee-8-mvc-ozark-wildfly-tomcat
 	
