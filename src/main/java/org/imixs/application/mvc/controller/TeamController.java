@@ -31,16 +31,8 @@ import org.imixs.workflow.mvc.controller.DocumentController;
 @Named
 public class TeamController extends DocumentController {
 
-	//public static final String WORKITEM_TYPE = "team";
-
 	private static Logger logger = Logger.getLogger(TeamController.class.getName());
-	//private ItemCollection workitem = new ItemCollection();
 
-	@EJB
-	DocumentService documentService;
-
-	
-	
 	/**
 	 * Initialize TeamController
 	 */
@@ -51,62 +43,4 @@ public class TeamController extends DocumentController {
 		setDocumentsView("teams.xhtml");
 	}
 
-/*
-	@GET
-	public String showTeams() {
-		return "teams.xhtml";
-	}
-
-	
-	@GET
-	@Path("{uniqueid}")
-	public String getTeam(@PathParam("uniqueid") String uid) {
-		
-		logger.info("......load team: " + uid);
-		workitem =documentService.load(uid);
-		return "team.xhtml";
-	}
-
-	
-	@POST
-	public String createTeam() {
-		String uid = WorkflowKernel.generateUniqueID();
-		logger.info("......create new team: " + uid);
-		workitem = new ItemCollection();
-		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
-		workitem.replaceItemValue("type", WORKITEM_TYPE);
-		return "team.xhtml";
-	}
-
-	@POST
-	@Path("{uniqueid}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	public String saveTeam(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
-
-		logger.finest("......postFormWorkitem @POST /workitem  method:postWorkitem....");
-		// parse the workItem.
-		workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
-		logger.info("......save team uniqueid=" + uid);
-		// save workItem ...
-		workitem.replaceItemValue("type", WORKITEM_TYPE);
-		workitem = documentService.save(workitem);
-		logger.finest("......ItemCollection saved");
-		return "teams.xhtml";
-	}
-
-	public ItemCollection getWorkitem() {
-		return workitem;
-	}
-
-	public void setWorkitem(ItemCollection workitem) {
-		this.workitem = workitem;
-	}
-
-	public List<ItemCollection> getTeams() {
-		logger.info("......load teams.");
-		List<ItemCollection> result = documentService.getDocumentsByType(WORKITEM_TYPE);
-		return result;
-
-	}
-	*/
 }
