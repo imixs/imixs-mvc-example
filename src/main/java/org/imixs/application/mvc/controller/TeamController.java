@@ -18,6 +18,7 @@ import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.WorkflowKernel;
 import org.imixs.workflow.engine.DocumentService;
 import org.imixs.workflow.jaxrs.WorkflowRestService;
+import org.imixs.workflow.mvc.controller.DocumentController;
 
 /**
  * Controller to manage active imixs-workflow instances.
@@ -28,16 +29,29 @@ import org.imixs.workflow.jaxrs.WorkflowRestService;
 @Controller
 @Path("teams")
 @Named
-public class TeamController {
+public class TeamController extends DocumentController {
 
-	public static final String WORKITEM_TYPE = "team";
+	//public static final String WORKITEM_TYPE = "team";
 
 	private static Logger logger = Logger.getLogger(TeamController.class.getName());
-	private ItemCollection workitem = new ItemCollection();
+	//private ItemCollection workitem = new ItemCollection();
 
 	@EJB
 	DocumentService documentService;
 
+	
+	
+	/**
+	 * Initialize TeamController
+	 */
+	public TeamController() {
+		super();
+		setDocumentType("team");
+		setDocumentView("team.xhtml");
+		setDocumentsView("teams.xhtml");
+	}
+
+/*
 	@GET
 	public String showTeams() {
 		return "teams.xhtml";
@@ -94,4 +108,5 @@ public class TeamController {
 		return result;
 
 	}
+	*/
 }
