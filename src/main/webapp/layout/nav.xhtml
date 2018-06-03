@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<h:form>
+		<ul>
+
+			<li><h:commandLink action="/pages/welcome">Home</h:commandLink></li>
+			<c:if test="#{!loginController.authenticated}">
+				<li><h:commandLink action="home">#{message.login}</h:commandLink></li>
+			</c:if>
+
+			<c:if test="#{loginController.authenticated}">
+				<li><h:commandLink action="/pages/config/teamlist">Team List</h:commandLink></li>
+			</c:if>
+		</ul>
+	</h:form>
+</ui:composition>
+
+
