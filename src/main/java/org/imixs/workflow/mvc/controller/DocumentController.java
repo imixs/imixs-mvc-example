@@ -126,7 +126,7 @@ public abstract class DocumentController {
 		}
 		
 		// save workItem ...
-		logger.info("......save team uniqueid=" + uid);
+		logger.info("......save document uniqueid=" + uid);
 		workitem = documentService.save(workitem);
 		logger.finest("......ItemCollection saved");
 		return getDocumentsView();

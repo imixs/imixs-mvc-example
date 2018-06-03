@@ -15,7 +15,7 @@ import javax.ws.rs.Path;
  */
 @Controller
 @Named
-@Path("/")
+@Path("/home")
 public class WelcomeController {
 	private static Logger logger = Logger.getLogger(WelcomeController.class.getName());
 

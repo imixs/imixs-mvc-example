@@ -55,26 +55,40 @@
 
 
 
-						<h:dataTable id="imixsdatatable" value="#{teamController.documents}"
-							var="record" styleClass="imixsdatatable">
+						<h:dataTable id="imixsdatatable"
+							value="#{teamController.documents}" var="record"
+							styleClass="imixsdatatable">
 							<h:column>
 								<f:facet name="header">#{message.name}</f:facet>
 									#{record.item['txtName']}
+							</h:column>
+ 
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{message.modified}" />
+								</f:facet>
+								<h:outputText value="#{record.item['$modified']}">
+									<f:convertDateTime type="both" dateStyle="short"
+										pattern="dd.MM.yy HH:mm:ss" />
+								</h:outputText>
 							</h:column>
 
 
 
 							<h:column>
 								<f:facet name="header">ID</f:facet>
-								<a href="#{facesContext.externalContext.requestContextPath}/app/teams/#{record.item['$uniqueid']}"
-								title="#{record.item['$uniqueid']}"
-								>edit</a>
+								<a
+									href="#{facesContext.externalContext.requestContextPath}/app/teams/#{record.item['$uniqueid']}"
+									title="#{record.item['$uniqueid']}">edit</a>
 							</h:column>
 
 						</h:dataTable>
 
-						<form action="#{facesContext.externalContext.requestContextPath}/app/teams" method="post">
-							<input type="submit" name="create-team" value="#{message.add}" />
+						<form
+							action="#{facesContext.externalContext.requestContextPath}/app/teams"
+							method="post">
+							<input type="submit"  value="#{message.add}" />
 						</form>
 
 

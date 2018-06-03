@@ -74,3 +74,18 @@ During development you can use the docker-compose-dev.yml file. This stack maps 
 you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
 
 	$ sudo chmod 777 src/docker/deployments/
+
+	
+	
+## Upload the BPMN Model:
+
+After you have successful deployed your application you can upload the Ticket workflow model via the [Imixs-REST Service API](http://www.imixs.org/doc/restapi/index.html). 
+
+<br><br><img src="model-ticket.png">
+
+Use the following curl command to upload the model from your workspace:
+
+    curl --user admin:adminpassword --request POST -Tsrc/workflow/ticket.bpmn http://localhost:8080/app/model/bpmn
+
+The BPMN Model is part of the project and located under /src/workflow/ticket.bpmn
+	

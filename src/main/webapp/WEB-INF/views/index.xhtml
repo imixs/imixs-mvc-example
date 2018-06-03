@@ -11,16 +11,19 @@
 
 		<div class="imixs-form">
 			<div class="imixs-header">
-				<h1>Welcome HOME  XHTML</h1>
+				<h1>Welcome</h1>
+				<h2>Imixs-Workflow MVC 1.0 Sample Application</h2>
 			</div>
 			
-			die ID = #{welcomeController.id}
-			
-			 <a href="#{facesContext.externalContext.requestContextPath}/app/status/conntection">test connection</a>
-
-
+		
 		<br />
-		 <a href="#{facesContext.externalContext.requestContextPath}/app/instances">Instances</a>
+		
+						<form
+							action="#{facesContext.externalContext.requestContextPath}/app/ticket/1.0.1/1000"
+							method="post">
+							<input type="submit"  value="Start new Ticket" />
+						</form>
+
 
 		</div>
 
