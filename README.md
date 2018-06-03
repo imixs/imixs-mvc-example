@@ -18,12 +18,18 @@ Find also additional help here:
 
 The Imixs-mvc-example  is based on Maven to build the project from sources run
 
-    mvn clean install
+    mvn clean install -Pdocker-build
     
 You can also download the application from the [latest release](https://github.com/imixs/imixs-mvc-example/releases).    
 
+## 2. Starting the Application in a Docker Container
 
-## 2. Run the Application
+After you have build the application and the Docker image you can start the application. The workflow engine needs a SQL Database. Both containers can be started with one docker-compose command
+
+	docker-compose up
+	
+
+## 3. Run the Application
 After deployment you can start the sample application from:
 
 	http://localhost:8080/workflow/api/hello
@@ -59,4 +65,12 @@ Now you can start the application. The workflow engine needs a SQL Database. Bot
 
 See the docker-compose.yml file for details
 
+## Development
 
+During development you can use the docker-compose-dev.yml file. This stack maps the src/docker/deployments folder to the wildfly auto deploy directory. 
+
+	$ docker-compose -f docker-compose-dev.yml up
+	
+you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
+
+	$ sudo chmod 777 src/docker/deployments/

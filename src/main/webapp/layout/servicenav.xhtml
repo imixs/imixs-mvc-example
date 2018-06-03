@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+	<f:view>
+		<h:form>
+			<!-- Branding -->
+			<h:panelGroup layout="block" styleClass="toolbar branding">
+				<a href="#{facesContext.externalContext.requestContextPath}/app">
+					<span>#{message.application_title}</span>
+				</a> 
+			</h:panelGroup>
+
+
+
+			<!-- About Section -->
+			<ui:include src="servicenav_about.xhtml" />
+
+		</h:form>
+	</f:view>
+</ui:composition>
+
+

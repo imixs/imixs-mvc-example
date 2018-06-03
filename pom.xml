@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imixs.application</groupId>
 	<artifactId>imixs-mvc-example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-
-
 	<name>Imixs Workflow MVC Sample Application</name>
 	<description>Imixs Workflow MVC Sample Application </description>
 	<url>https://github.com/imixs/imixs-mvc-example</url>
@@ -44,12 +43,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>4.1.5-SNAPSHOT</org.imixs.workflow.version>
+		<org.imixs.workflow.version>4.3.1</org.imixs.workflow.version>
 		<custom.webResources>src/main/webapp</custom.webResources>
 		<custom.unpackTypes>war</custom.unpackTypes>
-		<lucene.version>6.3.0</lucene.version>
+		<lucene.version>6.6.1</lucene.version>
+		<github.global.server>imixs-github-repo</github.global.server>
 	</properties>
-
+	
+	
 
 	<repositories>
 		<!-- Sonatype Snapshot repository -->
@@ -59,6 +60,44 @@
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
+
+
+	<profiles>
+
+		<profile>
+			<id>docker-build</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-t" />
+											<arg value="imixs/imixs-mvc-example" />
+											<arg value="./" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<resources>
 			<!-- enable resource filtering for multi language version -->
@@ -80,22 +119,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<filtering>true</filtering>
-							<!-- this is relative to the pom.xml directory -->
-							<directory>${custom.webResources}</directory>
-							<includes>
-								<include>**/WEB-INF/*</include>
-								<include>/src/main/resources/*</include>
-								<!-- include any other file types you want to filter -->
-							</includes>
-						</resource>
-					</webResources>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
+				<version>3.2.0</version>
 			</plugin>
 
 			<plugin>
@@ -118,67 +142,46 @@
 	</build>
 
 	<dependencies>
-		<!-- JEE Dependencies -->
+		<dependency>
+			<groupId>org.imixs.workflow</groupId>
+			<artifactId>imixs-workflow-core</artifactId>
+			<version>${org.imixs.workflow.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- mvc-api -->
+		<dependency>
+			<groupId>javax.mvc</groupId>
+			<artifactId>javax.mvc-api</artifactId>
+			<version>1.0-pr</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mvc-spec.ozark</groupId>
+			<artifactId>ozark-resteasy</artifactId>
+			<version>1.0.0-m03</version>
+		</dependency>
+		<!-- DaraStax Java Driver -->
+		<dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-core</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+
+		<!-- Java EE dependencies -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
 		</dependency>
-
-
- <dependency>
-    <groupId>javax.mvc</groupId>
-    <artifactId>javax.mvc-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </dependency>
-  <dependency>
-    <groupId>org.mvc-spec.ozark</groupId>
-    <artifactId>ozark-core</artifactId>
-    <version>1.0.0-m03-SNAPSHOT</version>
-  </dependency>
-  <dependency>
-    <groupId>org.mvc-spec.ozark</groupId>
-    <artifactId>ozark-resteasy</artifactId>
-    <version>1.0.0-m03-SNAPSHOT</version>
-  </dependency>
-
-
-<!-- 
-
+		<!-- JUnit Tests -->
 		<dependency>
-			<groupId>javax.mvc</groupId>
-			<artifactId>javax.mvc-api</artifactId>
-			<version>1.0-edr2</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.glassfish.ozark</groupId>
-			<artifactId>ozark</artifactId>
-			<version>1.0.0-m02</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-servlet</artifactId>
-			<version>2.23.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.ext.cdi</groupId>
-			<artifactId>jersey-cdi1x</artifactId>
-			<version>2.23.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-bean-validation</artifactId>
-			<version>2.23.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-validator</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		 -->
-
 	</dependencies>
 </project>

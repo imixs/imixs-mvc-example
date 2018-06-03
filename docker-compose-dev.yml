@@ -16,6 +16,8 @@ services:
       - "8080:8080"
       - "8787:8787"
       - "9990:9990"
+    volumes:
+      - ~/git/imixs-mvc-example/src/docker/deployments:/opt/wildfly/standalone/deployments/    
  
 
     
