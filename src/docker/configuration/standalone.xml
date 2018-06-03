@@ -376,8 +376,8 @@
                 <security-domain name="imixsrealm">
 			        <authentication>
 		                <login-module code="UsersRoles" flag="required">  
-		                    <module-option name="usersProperties" value="${jboss.server.config.dir}/sampleapp-users.properties"/>  
-		                    <module-option name="rolesProperties" value="${jboss.server.config.dir}/sampleapp-roles.properties"/>  
+		                    <module-option name="usersProperties" value="${jboss.server.config.dir}/imixs-users.properties"/>  
+		                    <module-option name="rolesProperties" value="${jboss.server.config.dir}/imixs-roles.properties"/>  
 		                </login-module>  
 		                <login-module code="RoleMapping" flag="required">
 	            			<module-option name="rolesProperties" value="file:${jboss.server.config.dir}/imixsrealm.properties"/>

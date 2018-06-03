@@ -13,7 +13,9 @@
 			</c:if>
 
 			<c:if test="#{loginController.authenticated}">
-				<li><h:commandLink action="/pages/config/teamlist">Team List</h:commandLink></li>
+				<li><a
+					href="#{facesContext.externalContext.requestContextPath}/app/teams">Teams</a>
+				</li>
 			</c:if>
 		</ul>
 	</h:form>
