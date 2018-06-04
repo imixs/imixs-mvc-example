@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -37,7 +39,11 @@ public abstract class DocumentController {
 	private static Logger logger = Logger.getLogger(DocumentController.class.getName());
 	
 	@EJB
-	DocumentService documentService;
+	protected DocumentService documentService;
+	
+	@Inject
+	protected Event<WorkitemEvent> events;
+
 	
 	public String getDocumentType() {
 		return documentType;
@@ -86,6 +92,7 @@ public abstract class DocumentController {
 	public String getDocumentByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load document: " + uid);
 		workitem =documentService.load(uid);
+		setWorkitem(workitem);
 		return getDocumentView();
 	}
 
@@ -97,6 +104,7 @@ public abstract class DocumentController {
 		workitem = new ItemCollection();
 		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
 		workitem.replaceItemValue("type", getDocumentType());
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CREATED));
 		return getDocumentView();
 	}
 
@@ -127,17 +135,21 @@ public abstract class DocumentController {
 		
 		// save workItem ...
 		logger.info("......save document uniqueid=" + uid);
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_SAVE));
 		workitem = documentService.save(workitem);
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_AFTER_PROCESS));
 		logger.finest("......ItemCollection saved");
 		return getDocumentsView();
 	}
 
 	public ItemCollection getWorkitem() {
+		
 		return workitem;
 	}
 
 	public void setWorkitem(ItemCollection workitem) {
 		this.workitem = workitem;
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CHANGED));
 	}
 
 	public List<ItemCollection> getDocuments() {

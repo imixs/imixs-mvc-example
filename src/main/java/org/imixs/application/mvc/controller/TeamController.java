@@ -1,24 +1,18 @@
 package org.imixs.application.mvc.controller;
 
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
+import javax.enterprise.event.Observes;
 import javax.inject.Named;
 import javax.mvc.annotation.Controller;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
-import org.imixs.workflow.ItemCollection;
-import org.imixs.workflow.WorkflowKernel;
-import org.imixs.workflow.engine.DocumentService;
-import org.imixs.workflow.jaxrs.WorkflowRestService;
+import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.mvc.controller.DocumentController;
+import org.imixs.workflow.mvc.controller.WorkitemEvent;
 
 /**
  * Controller to manage active imixs-workflow instances.
@@ -41,6 +35,42 @@ public class TeamController extends DocumentController {
 		setDocumentType("team");
 		setDocumentView("team.xhtml");
 		setDocumentsView("teams.xhtml");
+	}
+
+	/**
+	 * WorkItemEvent listener to convert team item
+	 * 
+	 * @param workitemEvent
+	 * @throws AccessDeniedException
+	 */
+	@SuppressWarnings("unchecked")
+	public void onWorkflowEvent(@Observes WorkitemEvent workitemEvent) throws AccessDeniedException {
+		if (workitemEvent == null)
+			return;
+
+		// skip if not a workItem...
+		if (workitemEvent.getWorkitem() != null
+				&& !workitemEvent.getWorkitem().getItemValueString("type").startsWith("team"))
+			return;
+
+		int eventType = workitemEvent.getEventType();
+
+		// convert list to string with newlines
+		if (WorkitemEvent.WORKITEM_CHANGED == eventType) {
+			List<String> members = workitemEvent.getWorkitem().getItemValue("members");
+			String result = "";
+			for (String member : members) {
+				result += member + "\n";
+			}
+			workitemEvent.getWorkitem().replaceItemValue("members", result);
+		}
+
+		// convert string with newlines to list
+		if (WorkitemEvent.WORKITEM_BEFORE_SAVE == eventType) {
+			String value = workitemEvent.getWorkitem().getItemValueString("members");
+			workitemEvent.getWorkitem().replaceItemValue("members", Arrays.asList(value.split("\\r?\\n")));
+		}
+
 	}
 
 }

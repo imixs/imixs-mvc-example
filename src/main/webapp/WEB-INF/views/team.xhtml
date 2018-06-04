@@ -13,31 +13,25 @@
 		<h2>#{message.edit}</h2>
 
 
-		<!--  Edit FOrm -->
+		<!--  Team Form -->
 		<form
 			action="#{facesContext.externalContext.requestContextPath}/app/teams/#{teamController.workitem.uniqueID}"
 			method="post">
-			<dl>
 
-				<dt>#{message.name}:</dt>
-				<dd>
-					<input type="text" style="width: 20em;"
-						value="#{teamController.workitem.item['txtname']}" name="txtname" />
+			<div class="imixs-form-section">
+				<dl>
+					<dt>#{message.name}:</dt>
+					<dd>
+						<input type="text" style="width: 20em;"
+							value="#{teamController.workitem.item['txtname']}" name="txtname" />
+					</dd>
 
-				</dd>
-
-				<dt style="clear: left;">#{message.members}:</dt>
-
-
-				<dd>
-
-					<TEXTAREA name="members" style="height: 5em; width: 10em;">
-						#{teamController.workitem.item['members']}
-							</TEXTAREA>
-				</dd>
-			</dl>
-
-			<div style="clear: left;" />
+					<dt>#{message.members}:</dt>
+					<dd>
+						<textarea name="members">#{teamController.workitem.item['members']}</textarea>
+					</dd>
+				</dl>
+			</div>
 
 			<!-- **** save Actions & History ***** -->
 

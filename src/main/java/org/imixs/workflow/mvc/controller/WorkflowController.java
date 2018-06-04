@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.mvc.annotation.Controller;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,16 +42,20 @@ public abstract class WorkflowController {
 	private static Logger logger = Logger.getLogger(WorkflowController.class.getName());
 
 	@EJB
-	ModelService modelService;
+	protected ModelService modelService;
 
 	@EJB
-	WorkflowService workflowService;
+	protected WorkflowService workflowService;
+	
+	@Inject
+	protected Event<WorkitemEvent> events;
 
 	@GET
 	@Path("{uniqueid}")
 	public String getWorkitemByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load workitem: " + uid);
 		workitem = workflowService.getWorkItem(uid);
+		setWorkitem(workitem);
 		return workitem.getItemValueString("txtWorkflowEditorID");
 	}
 
@@ -89,6 +93,9 @@ public abstract class WorkflowController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CREATED));
+		
 		logger.info("createWorkitem outcome=" + resultForm);
 		return resultForm;
 	}
@@ -99,6 +106,8 @@ public abstract class WorkflowController {
 	public String processWorkitem(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
 		try {
 			logger.info("......postFormWorkitem @POST /workitem  method:postWorkitem....");
+			
+			
 			// parse the workItem.
 			workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
 			workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
@@ -112,6 +121,7 @@ public abstract class WorkflowController {
 				currentInstance.replaceAllItems(workitem.getAllItems());
 				workitem = currentInstance;
 			}
+			
 
 			// save workItem ...
 			logger.info("......process uniqueid=" + uid);
@@ -120,7 +130,9 @@ public abstract class WorkflowController {
 			logger.info("......task=" + workitem.getProcessID());
 			logger.info("......event=" + workitem.getActivityID());
 
+			events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_PROCESS));
 			workitem = workflowService.processWorkItem(workitem);
+			events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_AFTER_PROCESS));
 		} catch (AccessDeniedException | ProcessingErrorException | PluginException | ModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,6 +147,7 @@ public abstract class WorkflowController {
 
 	public void setWorkitem(ItemCollection workitem) {
 		this.workitem = workitem;
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CHANGED));
 	}
 
 	public List<ItemCollection> getStatusList() {
