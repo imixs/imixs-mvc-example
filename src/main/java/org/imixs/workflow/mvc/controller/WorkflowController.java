@@ -81,12 +81,9 @@ public abstract class WorkflowController {
 
 			String uid = WorkflowKernel.generateUniqueID();
 			logger.info("......create new workitem: " + uid);
-			workitem = new ItemCollection();
+			workitem = new ItemCollection().model(modelversion).task(iTask);
 			workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
 			workitem.replaceItemValue("type", "workitem");
-			workitem.replaceItemValue(WorkflowKernel.MODELVERSION, modelversion);
-			workitem.replaceItemValue(WorkflowKernel.PROCESSID, iTask);
-
 			workitem.replaceItemValue(WorkflowKernel.WORKFLOWGROUP, taskElement.getItemValueString("txtworkflowgroup"));
 
 		} catch (ModelException e) {
@@ -127,8 +124,8 @@ public abstract class WorkflowController {
 			logger.info("......process uniqueid=" + uid);
 			logger.info("......modelversion=" + workitem.getModelVersion());
 			logger.info("......workflowgroup=" + workitem.getItemValueString(WorkflowKernel.WORKFLOWGROUP));
-			logger.info("......task=" + workitem.getProcessID());
-			logger.info("......event=" + workitem.getActivityID());
+			logger.info("......task=" + workitem.getTaskID());
+			logger.info("......event=" + workitem.getEventID());
 
 			events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_PROCESS));
 			workitem = workflowService.processWorkItem(workitem);

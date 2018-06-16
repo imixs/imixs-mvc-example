@@ -31,8 +31,6 @@
 				<dt style="clear: left;">
 					Team:
 				</dt>
-
-
 				<dd>
 
 					<input type="text" style="width: 20em;"
@@ -43,17 +41,14 @@
 			<div style="clear: left;" />
 
 			<!-- **** save Actions & History ***** -->
-
 			<h3>#{message.workflow}</h3>
-
-
 
 			<input type="text" 
 				value="#{ticketController.workitem.item['$modelversion']}"
 				name="$modelversion"></input> 
 				
 				<input type="text" 
-				value="#{ticketController.workitem.item['$processid']}"
+				value="#{ticketController.workitem.item['$taskid']}"
 				name="$processid"></input> 	
 				
 				
@@ -63,8 +58,8 @@
 				
 				
 				<input type="text" style="width: 20em;"
-				value="#{ticketController.workitem.item['$ActivityID']}"
-				name="$activityid" /> 
+				value="#{ticketController.workitem.item['$eventID']}"
+				name="$eventid" /> 
 				
 				<input type="submit" name="save-team"
 				value="#{message.save}" />
