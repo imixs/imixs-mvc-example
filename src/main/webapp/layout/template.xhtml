@@ -21,8 +21,7 @@
 
 	<i:imixsHeader disablecss="false"
 		dateformat="#{global.datePatternShort}" disabletinymce="false"
-		disablefileupload="false"
-		xxtheme="#{facesContext.externalContext.requestContextPath}/layout/themes/ui-darkness/jquery-ui-1.8.21.custom.css" />
+		disablefileupload="false"/>
 
 
 	<!-- tinyMCE -->
@@ -96,10 +95,10 @@
 		imixsOfficeWorkflow.contextPath="#{facesContext.externalContext.requestContextPath}";
 		 */
 		$(document).ready(function() {
-			//imixsOfficeWorkflow.layout();
-
 			layoutEditor();
-
+			
+			
+			$('a.imixs-button').button();
 		});
 
 		/* laest sich im moment nicht auslagern (script_url!) see issue #87 */

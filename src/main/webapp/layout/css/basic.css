@@ -249,7 +249,9 @@ a:hover {
 
 
 /* jquery-ui */
-.ui-widget {
-    font-size: 0.95em;
+
+.imixs-button span.ui-button-text  {
+    padding: .34em .95em;
+    color: #1c94c4;
 }
 

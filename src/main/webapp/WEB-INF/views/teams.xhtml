@@ -67,10 +67,14 @@
 							</ui:repeat>
 						</TABLE>
 
+						<hr />
 						<form
 							action="#{facesContext.externalContext.requestContextPath}/app/teams"
 							method="post">
 							<input type="submit" value="#{message.add}" />
+							<a class="imixs-button" href="#{facesContext.externalContext.requestContextPath}/app/home">close</a>
+							
+							
 						</form>
 
 
@@ -79,8 +83,7 @@
 				</div>
 			</div>
 
-
-			<a href="#{facesContext.externalContext.requestContextPath}/app">Home</a>
+			
 		</div>
 
 
