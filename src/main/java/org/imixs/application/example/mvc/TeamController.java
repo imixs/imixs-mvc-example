@@ -1,4 +1,4 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.example.mvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;

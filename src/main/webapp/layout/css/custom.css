@@ -1,0 +1,138 @@
+/* W3.CSS 4.10 February 2018 by Jan Egil and Borge Refsnes */
+html {
+	box-sizing: border-box;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+body, html {
+	font-family: 'Open Sans', sans-serif;
+	text-rendering: optimizeLegibility !important;
+	-webkit-font-smoothing: antialiased !important;
+	color: #5a5a5a;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit
+}
+
+
+
+#imixs-logo {
+	float: left;
+	background-image: url("logo.png");
+	background-repeat: no-repeat;
+	height: 80px;
+	width: 164px;
+}
+#imixs-content {
+	margin: 20px 120px 80px 120px;
+	min-height: 100%;
+}
+
+#imixs-content h1 .typcn {
+	margin-right:10px;
+}
+
+#imixs-content a {
+	color: #508AB5;
+	text-decoration: none;
+}
+
+
+#imixs-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #ddd;
+    padding: 10px 30px;
+}
+
+
+.imixs-header .typcn {
+	margin-right: 10px;
+}
+
+.title-bar {
+	background-color: #FCB802;
+	height: 90px;
+	padding: 10px;
+	white-space: nowrap;
+	xborder-bottom: 1px solid #fff;
+}
+
+.title-bar h1 {
+	font-weight: 600;
+	line-height: 1em;
+	margin-bottom:5px;
+}
+
+.title-bar h4 {
+	margin: 0;
+}
+
+.topnav {
+	overflow: hidden;
+	background-color: #ddd;
+}
+
+.topnav a {
+	float: left;
+	color: #333;
+	text-align: center;
+	padding: 10px 20px;
+	text-decoration: none;
+	font-size: 17px;
+	border-right: 1px solid #efefef;
+}
+
+.topnav a.pull-right {
+	float:right;
+	border-left: 1px solid #efefef;
+	border-right: none;
+}
+
+.topnav a:hover {
+	background-color: #fff;
+	color: black;
+}
+
+.topnav a.active {
+	background-color: #333;
+	color: white;
+}
+
+.topnav .typcn {
+	font-size:1.35em;
+	margin-right:5px;
+}
+
+button, input[type="button"], input[type="submit"], .button, a.button,
+	.imixs-button {
+	xbackground: #fcb802b8;
+	border: 1px solid #FCB802;
+	margin-right: 10px;
+}
+
+button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover,
+	a.button:hover, .imixs-button:hover {
+	xbackground-color: orange;
+	color: #fff;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
+	select:focus {
+	border: 1px solid #FCB802;
+	border-radius: 3px;
+	outline: 0;
+	outline: thin dotted \9;
+}
+
+table {
+	font-size: 14px;
+}
+
+th {
+	font-weight: bold;
+}

@@ -1,10 +1,12 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.example.mvc;
 
 import java.util.logging.Logger;
 
 import javax.inject.Named;
 import javax.mvc.annotation.Controller;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.imixs.workflow.mvc.controller.WorkflowController;
 
@@ -28,5 +30,15 @@ public class TicketController extends WorkflowController {
 		super();
 		
 	}
+	
+	
+	@GET
+	@Path("{modelversion}/{taskid}")
+	public String createNewTicket(@PathParam("modelversion") String modelversion, @PathParam("taskid") String taskid) {
+		
+		super.createWorkitem(modelversion, taskid);
+		return "ticket.xhtml";
+	}
+
 
 }

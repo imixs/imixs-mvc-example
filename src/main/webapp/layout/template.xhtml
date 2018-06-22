@@ -21,110 +21,111 @@
 
 	<i:imixsHeader disablecss="false"
 		dateformat="#{global.datePatternShort}" disabletinymce="false"
-		disablefileupload="false"/>
+		disablefileupload="false" />
 
 
 	<!-- tinyMCE -->
 	<script type="text/javascript"
 		src="#{facesContext.externalContext.requestContextPath}/layout/js/tinymce/tinymce.min.js"></script>
 
-	<!-- layout -->
-	<link
-		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-basic.css"
-		charset="UTF-8" type="text/css" rel="stylesheet" />
-	<link
-		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-layout.css"
-		charset="UTF-8" type="text/css" rel="stylesheet" />
-	<link
-		href="#{facesContext.externalContext.requestContextPath}/layout/css/basic.css"
-		charset="UTF-8" type="text/css" rel="stylesheet" />
 
+
+	<!-- Fonts
+    ================================================== -->
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/open_sans.css" />
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/typicons.css" />
+	<!-- Style
+    ================================================== -->
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-basic.css" />
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-layout.css" />
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/custom.css" />
 
 </h:head>
 <h:body>
 	<f:view>
-		<div id="imixs-contentWrapper">
-			<div id="imixs-servicenav">
-				<ui:include src="servicenav.xhtml" />
-			</div>
 
-			<div id="imixs-header">
-				<div id="imixs-logo"></div>
-				<div id="imixs-branding">
-					<span class="imixs-brandingtext1">Imixs Workflow</span> <span
-						class="imixs-brandingtext3">...the open source workflow
-						technology for business applications</span>
-					<p>
-						<span class="imixs-brandingtext2">Sample Application</span>
-					</p>
-				</div>
-			</div>
+		<div class="title-bar">
 
-
-			<div id="imixs-nav">
-
-				<ui:insert name="nav">
-					<ui:include src="nav.xhtml" />
-				</ui:insert>
-			</div>
-
-			<div id="imixs-content">
-				<ui:insert name="content">
-					<h2>Default Content</h2>
-				</ui:insert>
-			</div>
-
-			<div id="imixs-footer">
-				<ui:insert name="footer">
-					<ui:include src="footer.xhtml" />
-				</ui:insert>
+			<div id="imixs-logo"></div>
+			<div id="imixs-branding">
+				<h1>Imixs-Workflow</h1>
+				<p>MVC 1.0 Sample Application</p>
 			</div>
 		</div>
+
+
+
+		<div class="topnav">
+			<a class="active" href="#{facesContext.externalContext.requestContextPath}/app/home"><span class="typcn typcn-home"></span>Home</a>
+			<a href="#{facesContext.externalContext.requestContextPath}/app/ticket/1.0.1/1000"><span class="typcn typcn-tag"></span>New
+				Ticket</a> 
+				
+				<a href="#{facesContext.externalContext.requestContextPath}/app/teams"><span class="typcn typcn-group-outline"></span>Teams</a>
+			<a href="#about" class="pull-right"><span
+				class="typcn typcn-social-github"></span>Github</a>
+		</div>
+
+
+		<div id="imixs-content">
+			<ui:insert name="content">
+				<h2>Default Content</h2>
+			</ui:insert>
+		</div>
+
+		<div id="imixs-footer">
+			<ui:insert name="footer">
+				<ui:include src="footer.xhtml" />
+			</ui:insert>
+		</div>
+
+
+
+
+
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+			/* Init Script */
+			/* var imixs = IMIXS.org.imixs.core, 
+				imixsOfficeWorkflow = IMIXS.com.imixs.workflow.office;
+
+			imixsOfficeWorkflow.contextPath="#{facesContext.externalContext.requestContextPath}";
+			 */
+			$(document).ready(function() {
+				layoutEditor();
+
+				$('a.imixs-button').button();
+			});
+
+			/* laest sich im moment nicht auslagern (script_url!) see issue #87 */
+			layoutEditor = function() {
+
+				//tinymce.init({ selector:'textarea.imixs-editor' });
+
+				// Layout office default editor
+				tinymce
+						.init({
+							selector : 'textarea.imixs-editor',
+							height : 300,
+							plugins : [
+									'advlist autolink lists link image preview',
+									'searchreplace code fullscreen',
+									'contextmenu paste code' ],
+							toolbar : 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+							content_css : "#{facesContext.externalContext.requestContextPath}/layout/css/tinymce.css"
+
+						});
+
+			};
+
+			/*]]>*/
+		</script>
 	</f:view>
-
-
-
-
-	<script type="text/javascript">
-		/*<![CDATA[*/
-
-		/* Init Script */
-		/* var imixs = IMIXS.org.imixs.core, 
-			imixsOfficeWorkflow = IMIXS.com.imixs.workflow.office;
-
-		imixsOfficeWorkflow.contextPath="#{facesContext.externalContext.requestContextPath}";
-		 */
-		$(document).ready(function() {
-			layoutEditor();
-			
-			
-			$('a.imixs-button').button();
-		});
-
-		/* laest sich im moment nicht auslagern (script_url!) see issue #87 */
-		layoutEditor = function() {
-
-			//tinymce.init({ selector:'textarea.imixs-editor' });
-
-			// Layout office default editor
-			tinymce
-					.init({
-						selector : 'textarea.imixs-editor',
-						height : 300,
-						plugins : [
-								'advlist autolink lists link image preview',
-								'searchreplace code fullscreen',
-								'contextmenu paste code' ],
-						toolbar : 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-						content_css : "#{facesContext.externalContext.requestContextPath}/layout/css/tinymce.css"
-
-					});
-
-		};
-
-		/*]]>*/
-	</script>
-
 
 
 </h:body>
