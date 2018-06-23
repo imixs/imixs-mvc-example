@@ -90,7 +90,7 @@ public class TeamController extends DocumentController {
 	 * @return
 	 */
 	@POST
-	@Path("{uniqueid}")
+	@Path("{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public String saveTeam(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
 		model.setTeam(super.saveDocument(uid, requestBodyStream));

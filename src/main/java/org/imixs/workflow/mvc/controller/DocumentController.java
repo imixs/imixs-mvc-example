@@ -7,12 +7,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.WorkflowKernel;
@@ -46,7 +41,6 @@ public abstract class DocumentController {
 	 * @param type
 	 * @return instance of ItemCollection
 	 */
-	@POST
 	public ItemCollection createDocument(String type) {
 		String uid = WorkflowKernel.generateUniqueID();
 		logger.info("......create new document: " + uid);
@@ -66,9 +60,6 @@ public abstract class DocumentController {
 	 * @param requestBodyStream
 	 * @return updated instance of ItemCollection
 	 */
-	@POST
-	@Path("{uniqueid}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public ItemCollection saveDocument(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
 
 		logger.finest("......postFormWorkitem @POST /workitem  method:postWorkitem....");
@@ -102,8 +93,6 @@ public abstract class DocumentController {
 	 * @param uid
 	 * @return instance of ItemCollection or null if not found.
 	 */
-	@GET
-	@Path("{uniqueid}")
 	public ItemCollection findDocumentByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load document: " + uid);
 		ItemCollection document = documentService.load(uid);

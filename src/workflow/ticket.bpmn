@@ -102,6 +102,9 @@
         <imixs:item name="keyupdateacl" type="xs:boolean">
           <imixs:value>true</imixs:value>
         </imixs:item>
+        <imixs:item name="txttype" type="xs:string">
+          <imixs:value><![CDATA[workitemarchive]]></imixs:value>
+        </imixs:item>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_19</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
@@ -112,7 +115,7 @@
           <imixs:value><![CDATA[ticket submitted by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
         </imixs:item>
         <imixs:item name="txtactivityresult" type="CDATA">
-          <imixs:value><![CDATA[<item name="action">worklist</item>]]></imixs:value>
+          <imixs:value><![CDATA[<item name="action">redirect:ticket/statuslist</item>]]></imixs:value>
         </imixs:item>
         <imixs:item name="keyupdateacl" type="xs:boolean">
           <imixs:value>false</imixs:value>
@@ -138,6 +141,9 @@
         <imixs:item name="rtfresultlog" type="CDATA">
           <imixs:value><![CDATA[ticket updated by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
         </imixs:item>
+        <imixs:item name="txtactivityresult" type="CDATA">
+          <imixs:value><![CDATA[<item name="action">ticket.xhtml</item>]]></imixs:value>
+        </imixs:item>
       </bpmn2:extensionElements>
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
     </bpmn2:intermediateCatchEvent>
@@ -147,7 +153,7 @@
           <imixs:value><![CDATA[ticket accepted by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
         </imixs:item>
         <imixs:item name="txtactivityresult" type="CDATA">
-          <imixs:value><![CDATA[]]></imixs:value>
+          <imixs:value><![CDATA[<item name="action">redirect:ticket/tasklist</item>]]></imixs:value>
         </imixs:item>
         <imixs:item name="keyupdateacl" type="xs:boolean">
           <imixs:value>false</imixs:value>
@@ -178,7 +184,7 @@
           <imixs:value><![CDATA[ticket reopened by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
         </imixs:item>
         <imixs:item name="txtactivityresult" type="CDATA">
-          <imixs:value><![CDATA[<item name="action">worklist</item>]]></imixs:value>
+          <imixs:value><![CDATA[<item name="action">redirect:ticket/tasklist</item>]]></imixs:value>
         </imixs:item>
         <imixs:item name="keyupdateacl" type="xs:boolean">
           <imixs:value>false</imixs:value>
@@ -199,7 +205,7 @@
           <imixs:value><![CDATA[ticket solved by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
         </imixs:item>
         <imixs:item name="txtactivityresult" type="CDATA">
-          <imixs:value><![CDATA[<item name="action">worklist</item>]]></imixs:value>
+          <imixs:value><![CDATA[<item name="action">redirect:ticket/tasklist</item>]]></imixs:value>
         </imixs:item>
         <imixs:item name="keyupdateacl" type="xs:boolean">
           <imixs:value>false</imixs:value>
@@ -218,6 +224,9 @@
       <bpmn2:extensionElements>
         <imixs:item name="rtfresultlog" type="CDATA">
           <imixs:value><![CDATA[ticket updated by <itemvalue>namcurrentEditor</itemvalue>]]></imixs:value>
+        </imixs:item>
+        <imixs:item name="txtactivityresult" type="CDATA">
+          <imixs:value><![CDATA[<item name="action">ticket.xhtml</item>]]></imixs:value>
         </imixs:item>
       </bpmn2:extensionElements>
       <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>

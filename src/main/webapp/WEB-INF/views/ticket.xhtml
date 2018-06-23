@@ -5,6 +5,16 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="content">
+	
+		<script type="text/javascript">
+			/*<![CDATA[*/
+				$(document).ready(function() {
+				  // update the select option....
+				  $("#team_select").val("#{model.workitem.item['_team']}");
+				});
+
+			/*]]>*/
+		</script>
 
 
 		<h1>
@@ -12,65 +22,70 @@
 		</h1>
 
 		<!-- **** General info ***** -->
-		<h2>#{message.edit}: #{model.workitem.uniqueID}</h2>
+		<h2>ID: #{model.workitem.uniqueID}</h2>
 
 
 		<!--  Edit FOrm -->
 		<form
 			action="#{facesContext.externalContext.requestContextPath}/app/ticket/#{model.workitem.uniqueID}"
 			method="post">
-			<dl>
 
-				<dt>#{message.name}:</dt>
-				<dd>
-					<input type="text" style="width: 20em;"
-						value="#{model.workitem.item['_subject']}" name="_subject" />
+			<div class="imixs-form-section-2">
+				<dl>
+					<dt>Topic:</dt>
+					<dd>
+						<input type="text"
+							value="#{model.workitem.item['_subject']}" name="_subject" />
+					</dd>
+				</dl>
+				<dl>
+					<dt style="clear: left;">Team:</dt>
+					<dd>
+						<select name="_team" id="team_select">
+							<ui:repeat var="team" value="#{model.teams}">
+								<option>#{team.item['txtname']}</option>
+							</ui:repeat>
+						</select>
 
-				</dd>
+					</dd>
+				</dl>
+			</div>
+			<div class="imixs-form-section">
 
-				<dt style="clear: left;">Team:</dt>
-				<dd>
+				<dl>
+					<dt style="clear: left;">#{global.details}</dt>
+					<dd>
+						<textarea class="imixs-editor" name="description">#{model.workitem.item['description']}</textarea>
 
-					<input type="text" style="width: 20em;"
-						value="#{model.workitem.item['_team']}" name="_team" />
-				</dd>
-			</dl>
+					</dd>
+				</dl>
 
-			<div style="clear: left;" />
+			</div>
 
-			<!-- **** save Actions & History ***** -->
+			<!-- **** Workflow Actions & History ***** -->
 			<h3>#{message.workflow}</h3>
 
+			<!-- generate worklfow buttons -->
+			<ui:repeat var="event" value="#{model.events}">
+				<input type="submit" value="#{event.item['txtname']}"
+					onclick="$('#workflow_event').val(#{event.item['numactivityid']})" />
+			</ui:repeat>
 
-			<input type="submit" name="save-ticket" value="#{message.save}" /> 
-			
-			<input type="button"
-				onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/home';"
-				value="Close" />
-			
+			<a class="imixs-button"
+				href="#{facesContext.externalContext.requestContextPath}/app/home">#{message.close}</a>
+
+
 			<!-- hidden fields -->
-			<input type="hidden" name="type" value="#{model.workitem.item['type']}" />
-
-			<input type="text" value="#{model.workitem.item['$modelversion']}"
-				name="$modelversion"></input> <input type="text"
-				value="#{model.workitem.item['$taskid']}" name="$processid"></input> 
-				
-				
-			<input
-				type="text" value="#{model.workitem.item['$workflowgroup']}"
-				name="$workflowgorup"></input> <input type="text"
-				style="width: 20em;" value="#{model.workitem.item['$eventID']}"
-				name="$eventid" />
-
-
+			<input type="hidden" name="type"
+				value="#{model.workitem.item['type']}" /> <input type="hidden"
+				name="$modelversion" value="#{model.workitem.item['$modelversion']}" />
+			<input type="hidden" name="$processid"
+				value="#{model.workitem.item['$taskid']}" /> <input type="hidden"
+				name="$eventid" id="workflow_event"
+				value="#{model.workitem.item['$eventID']}" />
 
 		</form>
 
-
-
-
 	</ui:define>
-
-
 
 </ui:composition>

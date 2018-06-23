@@ -30,11 +30,9 @@ public class TicketController extends WorkflowController {
 
 	private static Logger logger = Logger.getLogger(TicketController.class.getName());
 
-	
 	@Inject
 	Model model;
-	
-	
+
 	/**
 	 * load task list for the current user
 	 * 
@@ -46,10 +44,9 @@ public class TicketController extends WorkflowController {
 		model.setTasklist(super.getTaskList());
 		return "tasklist.xhtml";
 	}
-	
-	
+
 	/**
-	 * load list of teams (default resource).
+	 * load status list of current user
 	 * 
 	 * @return statuslist.xhtml
 	 */
@@ -60,8 +57,18 @@ public class TicketController extends WorkflowController {
 		return "statuslist.xhtml";
 	}
 
-	
-	
+	/**
+	 * load list of archived workitem
+	 * 
+	 * @return statuslist.xhtml
+	 */
+	@GET
+	@Path("archive")
+	public String showArchive() {
+		model.setTasklist(super.getArchive());
+		return "statuslist.xhtml";
+	}
+
 	/**
 	 * Create a new ticket.
 	 * 
@@ -81,9 +88,8 @@ public class TicketController extends WorkflowController {
 		return "ticket.xhtml";
 	}
 
-
 	/**
-	 * load an existing ticket 
+	 * load an existing ticket
 	 * 
 	 * @param uid
 	 * @return
@@ -93,11 +99,10 @@ public class TicketController extends WorkflowController {
 	public String editTicket(@PathParam("uniqueid") String uid) {
 
 		logger.fine("load ticket...");
-		model.setWorkitem(super.findDocumentByUnqiueID(uid));
+		model.setWorkitem(super.findWorkitemByUnqiueID(uid));
 		return "ticket.xhtml";
 	}
-	
-	
+
 	/**
 	 * Process the ticket instance.
 	 * 
@@ -106,7 +111,7 @@ public class TicketController extends WorkflowController {
 	 * @return
 	 */
 	@POST
-	@Path("{uniqueid}")
+	@Path("{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public String processTicket(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
 		try {
@@ -114,10 +119,14 @@ public class TicketController extends WorkflowController {
 		} catch (AccessDeniedException | ProcessingErrorException | PluginException | ModelException e) {
 			logger.severe("Unable to process Ticket instance: " + e.getMessage());
 		}
-		// update teams....
-		model.setTeams(super.findDocumentsByType("team"));
-		return "redirect:home";
+
+		// compute workflow result (see the workflow model for details)
+		String result = model.getWorkitem().getItemValueString("action");
+		if (result.isEmpty()) {
+			result = "ticket.xhtml";
+		}
+		logger.info("...workflow result => " + result);
+		return result;
 	}
-	
 
 }

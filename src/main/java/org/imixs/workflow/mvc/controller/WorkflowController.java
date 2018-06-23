@@ -5,12 +5,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.Model;
@@ -33,9 +30,12 @@ import org.imixs.workflow.jaxrs.WorkflowRestService;
  * @author rsoika
  *
  */
-public abstract class WorkflowController extends DocumentController {
+public abstract class WorkflowController {
 
 	private static Logger logger = Logger.getLogger(WorkflowController.class.getName());
+
+	@Inject
+	protected Event<WorkitemEvent> events;
 
 	@EJB
 	protected ModelService modelService;
@@ -50,11 +50,11 @@ public abstract class WorkflowController extends DocumentController {
 	 * @param uid
 	 * @return instance of ItemCollection or null if not found.
 	 */
-	@GET
-	@Path("{uniqueid}")
 	public ItemCollection findWorkitemByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load workitem: " + uid);
-		return super.findDocumentByUnqiueID(uid);
+		ItemCollection workitem = workflowService.getWorkItem(uid);
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CHANGED));
+		return workitem;
 	}
 
 	/**
@@ -63,8 +63,6 @@ public abstract class WorkflowController extends DocumentController {
 	 * @return
 	 * @throws ModelException
 	 */
-	@POST
-	@Path("{modelversion}/{task}")
 	public ItemCollection createWorkitem(@PathParam("modelversion") String modelversion, @PathParam("task") String task)
 			throws ModelException {
 
@@ -105,9 +103,6 @@ public abstract class WorkflowController extends DocumentController {
 	 * @throws ProcessingErrorException
 	 * @throws AccessDeniedException
 	 */
-	@POST
-	@Path("{uniqueid}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public ItemCollection processWorkitem(@PathParam("uniqueid") String uid, InputStream requestBodyStream)
 			throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
 		ItemCollection workitem = null;
@@ -143,8 +138,6 @@ public abstract class WorkflowController extends DocumentController {
 		return workitem;
 	}
 
-	
-
 	public List<ItemCollection> getStatusList() {
 		logger.info("......load documents.");
 		List<ItemCollection> result = workflowService.getWorkListByCreator(null, "workitem", 30, 0, "$modified", true);
@@ -158,4 +151,12 @@ public abstract class WorkflowController extends DocumentController {
 		return result;
 
 	}
+
+	public List<ItemCollection> getArchive() {
+		logger.info("......load documents.");
+		List<ItemCollection> result = workflowService.getDocumentService().getDocumentsByType("workitemarchive");
+		return result;
+
+	}
+
 }

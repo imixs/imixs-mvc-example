@@ -8,7 +8,7 @@
 		<div class="imixs-form">
 			<div class="imixs-header">
 				<h1>
-					<span class="typcn typcn-tags"></span>Stauslist
+					<span class="typcn typcn-tags"></span>Archive
 				</h1>
 			</div>
 			<div class="imixs-body">
@@ -18,26 +18,23 @@
 							style="width: 100%;">
 							<tr>
 								<th>Summary</th>
-								<th>Team</th>
-								<th>#{message.owner}</th>
+
+								<th>#{message.createdby}</th>
+
+								<th>Last Editor</th>
+
 								<th>#{message.modified}</th>
 								<th>#{message.status}</th>
-								<th>Action</th>
+
 							</tr>
 							<ui:repeat var="record" value="#{model.tasklist}">
 								<tr>
-									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/ticket/edit/#{record.item['$uniqueid']}"
-										title="#{record.item['$uniqueid']}">#{record.item['txtworkflowsummary']}</a></td>
-									<td>#{record.item['_team']}</td>
-
-									<td>#{record.item['namowner']}</td>
+									<td>#{record.item['txtworkflowsummary']}</td>
+									<td>#{record.item['$creator']}</td>
+									<td>#{record.item['$editor']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
-									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/ticket/edit/#{record.item['$uniqueid']}"
-										title="#{record.item['$uniqueid']}"><span
-											class="typcn typcn-edit"></span>#{message.edit}</a></td>
+
 								</tr>
 							</ui:repeat>
 						</table>

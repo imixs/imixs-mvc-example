@@ -1,18 +1,22 @@
 package org.imixs.application.example.mvc;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Named;
 
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.ItemCollectionComparator;
+import org.imixs.workflow.engine.WorkflowService;
 import org.imixs.workflow.exceptions.AccessDeniedException;
+import org.imixs.workflow.exceptions.ModelException;
 import org.imixs.workflow.mvc.controller.WorkitemEvent;
 
 /**
@@ -31,9 +35,12 @@ public class Model implements Serializable {
 
 	ItemCollection team;
 	List<org.imixs.workflow.ItemCollection> teams;
-	
+
 	ItemCollection workitem;
 	List<org.imixs.workflow.ItemCollection> tasklist;
+
+	@EJB
+	WorkflowService workflowService;
 
 	/**
 	 * Initialize model
@@ -52,6 +59,9 @@ public class Model implements Serializable {
 	}
 
 	public List<org.imixs.workflow.ItemCollection> getTeams() {
+		if (teams == null) {
+			teams = workflowService.getDocumentService().getDocumentsByType("team");
+		}
 		return teams;
 	}
 
@@ -64,8 +74,6 @@ public class Model implements Serializable {
 
 		this.teams = teams;
 	}
-
-
 
 	public List<ItemCollection> getTasklist() {
 		return tasklist;
@@ -81,6 +89,23 @@ public class Model implements Serializable {
 
 	public void setWorkitem(ItemCollection workitem) {
 		this.workitem = workitem;
+	}
+
+	/**
+	 * This method returns the events for the current workitem instance.
+	 * 
+	 * @return
+	 */
+	public List<ItemCollection> getEvents() {
+		List<ItemCollection> events = new ArrayList<ItemCollection>();
+		try {
+			if (workitem != null) {
+				events = workflowService.getEvents(workitem);
+			}
+		} catch (ModelException e) {
+			logger.severe("unable to get workfow event: " + e.getMessage());
+		}
+		return events;
 	}
 
 	/**
