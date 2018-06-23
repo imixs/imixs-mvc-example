@@ -106,8 +106,9 @@ public abstract class DocumentController {
 	@Path("{uniqueid}")
 	public ItemCollection findDocumentByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load document: " + uid);
-		ItemCollection workitem = documentService.load(uid);
-		return workitem;
+		ItemCollection document = documentService.load(uid);
+		events.fire(new WorkitemEvent(document, WorkitemEvent.WORKITEM_CHANGED));
+		return document;
 	}
 
 	/**

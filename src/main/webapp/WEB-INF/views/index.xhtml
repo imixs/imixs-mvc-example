@@ -9,15 +9,37 @@
 
 		<div class="imixs-form">
 			<div class="imixs-header">
-				<h1><span class="typcn typcn-tags"></span>Tickets</h1>
+				<h1>
+					<span class="typcn typcn-home"></span>Welcome
+				</h1>
 			</div>
-			<br />
 
-			<form
-				action="#{facesContext.externalContext.requestContextPath}/app/ticket/1.0.1/1000"
-				method="post">
-				<input type="submit" value="Start new Ticket" />
-			</form>
+
+			<p class="lead">
+				The Imixs-MVC-Example provides a sample web application based on MVC
+				1.0. The application runns on the the Imixs-Workflow engine and
+				provides the example workflow ""ticket" . You can take this
+				application as a scaffolding for your own web business application
+				based on the <a href="http://www.imixs.org" target="_blank">Imixs-Workflow
+					project</a>.
+			</p>
+
+			<p class="lead">To start the applicaiton make sure that you have
+				upladed the ticket BPMN model. To uplad the model use the CURL
+				command:</p>
+			<pre>
+curl --user admin:adminpassword --request POST -Tsrc/workflow/ticket.bpmn http://localhost:8080/workflow/app/model/bpmn
+</pre>
+			<br />
+			<p class="lead">After you have uploaded the ticket workflow model
+				you can create a team and than start the ticket workflow.</p>
+
+
+			<a href="#{facesContext.externalContext.requestContextPath}/app/ticket/1.0.1/100"
+			class="imixs-button">Start New Ticket</a>
+
+
+
 		</div>
 
 

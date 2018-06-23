@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,9 +33,7 @@ import org.imixs.workflow.jaxrs.WorkflowRestService;
  * @author rsoika
  *
  */
-public abstract class WorkflowController {
-
-	private ItemCollection workitem = new ItemCollection();
+public abstract class WorkflowController extends DocumentController {
 
 	private static Logger logger = Logger.getLogger(WorkflowController.class.getName());
 
@@ -46,106 +42,108 @@ public abstract class WorkflowController {
 
 	@EJB
 	protected WorkflowService workflowService;
-	
-	@Inject
-	protected Event<WorkitemEvent> events;
 
+	/**
+	 * Finds an instance of ItemCollection by $uniqueID. If not found, the method
+	 * returns null.
+	 * 
+	 * @param uid
+	 * @return instance of ItemCollection or null if not found.
+	 */
 	@GET
 	@Path("{uniqueid}")
-	public String getWorkitemByUnqiueID(@PathParam("uniqueid") String uid) {
+	public ItemCollection findWorkitemByUnqiueID(@PathParam("uniqueid") String uid) {
 		logger.info("......load workitem: " + uid);
-		workitem = workflowService.getWorkItem(uid);
-		setWorkitem(workitem);
-		return workitem.getItemValueString("txtWorkflowEditorID");
+		return super.findDocumentByUnqiueID(uid);
 	}
 
 	/**
 	 * Creates a new process instance based on the given model version
 	 * 
 	 * @return
+	 * @throws ModelException
 	 */
 	@POST
 	@Path("{modelversion}/{task}")
-	public String createWorkitem(@PathParam("modelversion") String modelversion, @PathParam("task") String task) {
-		String resultForm = "";
+	public ItemCollection createWorkitem(@PathParam("modelversion") String modelversion, @PathParam("task") String task)
+			throws ModelException {
+
+		ItemCollection workitem = null;
 		int iTask = Integer.parseInt(task);
 		Model model;
-		try {
-			model = modelService.getModel(modelversion);
 
-			// find task
-			ItemCollection taskElement = model.getTask(iTask);
+		model = modelService.getModel(modelversion);
+		// find task element
+		ItemCollection taskElement = model.getTask(iTask);
 
-			// get Form2
-			resultForm = taskElement.getItemValueString("txteditorid");
+		String uid = WorkflowKernel.generateUniqueID();
+		logger.info("......create new workitem: " + uid);
+		workitem = new ItemCollection().model(modelversion).task(iTask);
+		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+		workitem.replaceItemValue("type", "workitem");
+		workitem.replaceItemValue(WorkflowKernel.WORKFLOWGROUP, taskElement.getItemValueString("txtworkflowgroup"));
 
-			String uid = WorkflowKernel.generateUniqueID();
-			logger.info("......create new workitem: " + uid);
-			workitem = new ItemCollection().model(modelversion).task(iTask);
-			workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
-			workitem.replaceItemValue("type", "workitem");
-			workitem.replaceItemValue(WorkflowKernel.WORKFLOWGROUP, taskElement.getItemValueString("txtworkflowgroup"));
-
-		} catch (ModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CREATED));
-		
-		logger.info("createWorkitem outcome=" + resultForm);
-		return resultForm;
-	}
 
-	@POST
-	@Path("{uniqueid}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	public String processWorkitem(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
-		try {
-			logger.info("......postFormWorkitem @POST /workitem  method:postWorkitem....");
-			
-			
-			// parse the workItem.
-			workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
-			workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
-
-			// try to load current instance of this document entity
-			ItemCollection currentInstance = workflowService.getWorkItem(uid);
-			if (currentInstance != null) {
-				// merge entity into current instance
-				// an instance of this Entity still exists! so we update the
-				// new values here....
-				currentInstance.replaceAllItems(workitem.getAllItems());
-				workitem = currentInstance;
-			}
-			
-
-			// save workItem ...
-			logger.info("......process uniqueid=" + uid);
-			logger.info("......modelversion=" + workitem.getModelVersion());
-			logger.info("......workflowgroup=" + workitem.getItemValueString(WorkflowKernel.WORKFLOWGROUP));
-			logger.info("......task=" + workitem.getTaskID());
-			logger.info("......event=" + workitem.getEventID());
-
-			events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_PROCESS));
-			workitem = workflowService.processWorkItem(workitem);
-			events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_AFTER_PROCESS));
-		} catch (AccessDeniedException | ProcessingErrorException | PluginException | ModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		logger.finest("......ItemCollection saved");
-		return workitem.getItemValueString("txtWorkflowEditorID");
-	}
-
-	public ItemCollection getWorkitem() {
 		return workitem;
 	}
 
-	public void setWorkitem(ItemCollection workitem) {
-		this.workitem = workitem;
-		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CHANGED));
+	/**
+	 * Process an instance of an Imixs ItemCollection. The method accepts a
+	 * $uniqueID to identify an already existing stored instance and a InputStream
+	 * to be parsed for form values provided by a web page.
+	 * 
+	 * @param uid
+	 * @param requestBodyStream
+	 * @return updated instance of ItemCollection
+	 *
+	 * @param uid
+	 * @param requestBodyStream
+	 * @return
+	 * @throws ModelException
+	 * @throws PluginException
+	 * @throws ProcessingErrorException
+	 * @throws AccessDeniedException
+	 */
+	@POST
+	@Path("{uniqueid}")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	public ItemCollection processWorkitem(@PathParam("uniqueid") String uid, InputStream requestBodyStream)
+			throws AccessDeniedException, ProcessingErrorException, PluginException, ModelException {
+		ItemCollection workitem = null;
+
+		logger.info("......postFormWorkitem @POST /workitem  method:postWorkitem....");
+
+		// parse the workItem.
+		workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
+		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+
+		// try to load current instance of this document entity
+		ItemCollection currentInstance = workflowService.getWorkItem(uid);
+		if (currentInstance != null) {
+			// merge entity into current instance
+			// an instance of this Entity still exists! so we update the
+			// new values here....
+			currentInstance.replaceAllItems(workitem.getAllItems());
+			workitem = currentInstance;
+		}
+
+		// save workItem ...
+		logger.info("......process uniqueid=" + uid);
+		logger.info("......modelversion=" + workitem.getModelVersion());
+		logger.info("......workflowgroup=" + workitem.getItemValueString(WorkflowKernel.WORKFLOWGROUP));
+		logger.info("......task=" + workitem.getTaskID());
+		logger.info("......event=" + workitem.getEventID());
+
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_PROCESS));
+		workitem = workflowService.processWorkItem(workitem);
+		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_AFTER_PROCESS));
+
+		logger.finest("......ItemCollection saved");
+		return workitem;
 	}
+
+	
 
 	public List<ItemCollection> getStatusList() {
 		logger.info("......load documents.");

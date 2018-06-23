@@ -7,34 +7,32 @@
 	<ui:define name="content">
 
 
-		<h1><span class="typcn typcn-tag"></span>Ticket</h1>
+		<h1>
+			<span class="typcn typcn-tag"></span>Ticket
+		</h1>
 
 		<!-- **** General info ***** -->
-		<h2>#{message.edit}: #{ticketController.workitem.uniqueID}</h2>
+		<h2>#{message.edit}: #{model.workitem.uniqueID}</h2>
 
 
 		<!--  Edit FOrm -->
 		<form
-			action="#{facesContext.externalContext.requestContextPath}/app/ticket/#{ticketController.workitem.uniqueID}"
+			action="#{facesContext.externalContext.requestContextPath}/app/ticket/#{model.workitem.uniqueID}"
 			method="post">
 			<dl>
 
-				<dt>#{message.name}:
-				</dt>
+				<dt>#{message.name}:</dt>
 				<dd>
 					<input type="text" style="width: 20em;"
-						value="#{ticketController.workitem.item['_subject']}"
-						name="txtname" />
+						value="#{model.workitem.item['_subject']}" name="_subject" />
 
 				</dd>
 
-				<dt style="clear: left;">
-					Team:
-				</dt>
+				<dt style="clear: left;">Team:</dt>
 				<dd>
 
 					<input type="text" style="width: 20em;"
-						value="#{ticketController.workitem.item['_team']}" name="txtname" />
+						value="#{model.workitem.item['_team']}" name="_team" />
 				</dd>
 			</dl>
 
@@ -43,29 +41,29 @@
 			<!-- **** save Actions & History ***** -->
 			<h3>#{message.workflow}</h3>
 
-			<input type="text" 
-				value="#{ticketController.workitem.item['$modelversion']}"
-				name="$modelversion"></input> 
+
+			<input type="submit" name="save-ticket" value="#{message.save}" /> 
+			
+			<input type="button"
+				onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/home';"
+				value="Close" />
+			
+			<!-- hidden fields -->
+			<input type="hidden" name="type" value="#{model.workitem.item['type']}" />
+
+			<input type="text" value="#{model.workitem.item['$modelversion']}"
+				name="$modelversion"></input> <input type="text"
+				value="#{model.workitem.item['$taskid']}" name="$processid"></input> 
 				
-				<input type="text" 
-				value="#{ticketController.workitem.item['$taskid']}"
-				name="$processid"></input> 	
 				
-				
-				<input type="text" 
-				value="#{ticketController.workitem.item['$workflowgroup']}"
-				name="$workflowgorup"></input> 
-				
-				
-				<input type="text" style="width: 20em;"
-				value="#{ticketController.workitem.item['$eventID']}"
-				name="$eventid" /> 
-				
-				<input type="submit" name="save-team"
-				value="#{message.save}" />
-		
-				<a class="imixs-button" href="#{facesContext.externalContext.requestContextPath}/app/home">close</a>
-							
+			<input
+				type="text" value="#{model.workitem.item['$workflowgroup']}"
+				name="$workflowgorup"></input> <input type="text"
+				style="width: 20em;" value="#{model.workitem.item['$eventID']}"
+				name="$eventid" />
+
+
+
 		</form>
 
 

@@ -59,6 +59,10 @@ body, html {
 	margin-right: 10px;
 }
 
+.pull-right {
+	float:right;
+}
+
 .title-bar {
 	background-color: #FCB802;
 	height: 90px;
@@ -93,7 +97,6 @@ body, html {
 }
 
 .topnav a.pull-right {
-	float:right;
 	border-left: 1px solid #efefef;
 	border-right: none;
 }
@@ -115,14 +118,22 @@ body, html {
 
 button, input[type="button"], input[type="submit"], .button, a.button,
 	.imixs-button {
-	xbackground: #fcb802b8;
+	background: #fcb802b8;
 	border: 1px solid #FCB802;
 	margin-right: 10px;
+	color: #666;
 }
 
 button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover,
 	a.button:hover, .imixs-button:hover {
-	xbackground-color: orange;
+	background-color: orange;
+	color: #fff;
+}
+
+#imixs-content a.imixs-button {
+	color: inherit;
+}
+#imixs-content a.imixs-button:hover {
 	color: #fff;
 }
 

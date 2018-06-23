@@ -1,11 +1,8 @@
 package org.imixs.application.example.mvc;
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.mvc.annotation.Controller;
 import javax.ws.rs.Consumes;
@@ -15,9 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.mvc.controller.DocumentController;
-import org.imixs.workflow.mvc.controller.WorkitemEvent;
 
 /**
  * The TeamController manages the creation, save and editing of team instances
@@ -48,6 +43,7 @@ public class TeamController extends DocumentController {
 		model.setTeams(super.findDocumentsByType("team"));
 		return "teams.xhtml";
 	}
+
 
 	/**
 	 * create new team...
@@ -86,6 +82,13 @@ public class TeamController extends DocumentController {
 		return "redirect:teams/";
 	}
 	
+	/**
+	 * Save the team instance.
+	 * 
+	 * @param uid
+	 * @param requestBodyStream
+	 * @return
+	 */
 	@POST
 	@Path("{uniqueid}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
@@ -98,40 +101,5 @@ public class TeamController extends DocumentController {
 
 
 
-	/**
-	 * WorkItemEvent listener to convert team item into a multi value list
-	 * 
-	 * @param workitemEvent
-	 * @throws AccessDeniedException
-	 */
-	@SuppressWarnings("unchecked")
-	public void onWorkflowEvent(@Observes WorkitemEvent workitemEvent) throws AccessDeniedException {
-		if (workitemEvent == null)
-			return;
-
-		// skip if not a workItem...
-		if (workitemEvent.getWorkitem() != null
-				&& !workitemEvent.getWorkitem().getItemValueString("type").startsWith("team"))
-			return;
-
-		int eventType = workitemEvent.getEventType();
-
-		// convert list to string with newlines
-		if (WorkitemEvent.WORKITEM_CHANGED == eventType) {
-			List<String> members = workitemEvent.getWorkitem().getItemValue("members");
-			String result = "";
-			for (String member : members) {
-				result += member + "\n";
-			}
-			workitemEvent.getWorkitem().replaceItemValue("members", result);
-		}
-
-		// convert string with newlines to list
-		if (WorkitemEvent.WORKITEM_BEFORE_SAVE == eventType) {
-			String value = workitemEvent.getWorkitem().getItemValueString("members");
-			workitemEvent.getWorkitem().replaceItemValue("members", Arrays.asList(value.split("\\r?\\n")));
-		}
-
-	}
-
+	
 }
