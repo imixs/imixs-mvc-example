@@ -20,141 +20,105 @@ import org.imixs.workflow.engine.DocumentService;
 import org.imixs.workflow.jaxrs.WorkflowRestService;
 
 /**
- * The DocumentController provide a generic controller class to handle document entities 
- * managed by the Imixs-Workflow DocumentService.
+ * The DocumentController provide a generic controller class to handle document
+ * entities managed by the Imixs-Workflow DocumentService.
  * 
- * The DocumentController provides a set of properties to describe a specific document entity.
+ * A MVC 1.0 Controller can be extended from this class. 
  * 
  * @author rsoika
  *
  */
 public abstract class DocumentController {
 
-	private ItemCollection workitem = new ItemCollection();
-	private String documentsView;
-	private String documentView;
-	private String documentType;
-
-
 	private static Logger logger = Logger.getLogger(DocumentController.class.getName());
-	
+
 	@EJB
 	protected DocumentService documentService;
-	
+
 	@Inject
 	protected Event<WorkitemEvent> events;
 
-	
-	public String getDocumentType() {
-		return documentType;
-	}
-
-
-	public void setDocumentType(String documentType) {
-		this.documentType = documentType;
-	}
-
-
-
-
-	public String getDocumentsView() {
-		return documentsView;
-	}
-
-
-	public void setDocumentsView(String documentsView) {
-		this.documentsView = documentsView;
-	}
-
-
-	public String getDocumentView() {
-		return documentView;
-	}
-
-
-	public void setDocumentView(String documentView) {
-		this.documentView = documentView;
-	}
-
-
 	/**
-	 * load list of documents
-	 * @return
+	 * Creates a new instance of an Imixs ItemCollection with a $uniqueID and the
+	 * specified type property. The method also fires a CDI event to allow other CDI
+	 * beans to intercept the creation method.
+	 * 
+	 * @param type
+	 * @return instance of ItemCollection
 	 */
-	@GET
-	public String showDocuments() {
-		return getDocumentsView();
-	}
-
-	
-	@GET
-	@Path("{uniqueid}")
-	public String getDocumentByUnqiueID(@PathParam("uniqueid") String uid) {
-		logger.info("......load document: " + uid);
-		workitem =documentService.load(uid);
-		setWorkitem(workitem);
-		return getDocumentView();
-	}
-
-	
 	@POST
-	public String createDocument() {
+	public ItemCollection createDocument(String type) {
 		String uid = WorkflowKernel.generateUniqueID();
 		logger.info("......create new document: " + uid);
-		workitem = new ItemCollection();
+		ItemCollection workitem = new ItemCollection();
 		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
-		workitem.replaceItemValue("type", getDocumentType());
+		workitem.replaceItemValue("type", type);
 		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CREATED));
-		return getDocumentView();
+		return workitem;
 	}
 
+	/**
+	 * Saves an instance of an Imixs ItemCollection. The method accepts a $uniqueID
+	 * to identify an already existing stored instance and a InputStream to be
+	 * parsed for form values provided by a web page.
+	 * 
+	 * @param uid
+	 * @param requestBodyStream
+	 * @return updated instance of ItemCollection
+	 */
 	@POST
 	@Path("{uniqueid}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	public String saveDocument(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
+	public ItemCollection saveDocument(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
 
 		logger.finest("......postFormWorkitem @POST /workitem  method:postWorkitem....");
 		// parse the workItem.
-		workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
-		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
-		
+		ItemCollection document = WorkflowRestService.parseWorkitem(requestBodyStream);
+		document.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+
 		// try to load current instance of this document entity
 		ItemCollection currentInstance = documentService.load(uid);
 		if (currentInstance != null) {
 			// merge entity into current instance
 			// an instance of this Entity still exists! so we update the
 			// new values here....
-			currentInstance.replaceAllItems(workitem.getAllItems());
-			workitem = currentInstance;
-		} 
-		
-		// update doucment type
-		if (workitem.getType().isEmpty()) {
-			workitem.replaceItemValue("type", getDocumentType());
+			currentInstance.replaceAllItems(document.getAllItems());
+			document = currentInstance;
 		}
-		
+
 		// save workItem ...
 		logger.info("......save document uniqueid=" + uid);
-		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_BEFORE_SAVE));
-		workitem = documentService.save(workitem);
-		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_AFTER_PROCESS));
+		events.fire(new WorkitemEvent(document, WorkitemEvent.WORKITEM_BEFORE_SAVE));
+		document = documentService.save(document);
+		events.fire(new WorkitemEvent(document, WorkitemEvent.WORKITEM_AFTER_PROCESS));
 		logger.finest("......ItemCollection saved");
-		return getDocumentsView();
+		return document;
 	}
 
-	public ItemCollection getWorkitem() {
-		
+	/**
+	 * Finds an instance of ItemCollection by $uniqueID. If not found, the method
+	 * returns null.
+	 * 
+	 * @param uid
+	 * @return instance of ItemCollection or null if not found.
+	 */
+	@GET
+	@Path("{uniqueid}")
+	public ItemCollection findDocumentByUnqiueID(@PathParam("uniqueid") String uid) {
+		logger.info("......load document: " + uid);
+		ItemCollection workitem = documentService.load(uid);
 		return workitem;
 	}
 
-	public void setWorkitem(ItemCollection workitem) {
-		this.workitem = workitem;
-		events.fire(new WorkitemEvent(workitem, WorkitemEvent.WORKITEM_CHANGED));
-	}
-
-	public List<ItemCollection> getDocuments() {
+	/**
+	 * Finds a collection of ItemCollection instances by type.
+	 * 
+	 * @param type
+	 * @return collection of ItemCollection
+	 */
+	public List<ItemCollection> findDocumentsByType(String type) {
 		logger.info("......load documents.");
-		List<ItemCollection> result = documentService.getDocumentsByType(getDocumentType());
+		List<ItemCollection> result = documentService.getDocumentsByType(type);
 		return result;
 
 	}

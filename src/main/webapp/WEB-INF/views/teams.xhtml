@@ -8,35 +8,15 @@
 
 		<script type="text/javascript">
 			/*<![CDATA[*/
-
-			// The following code is used to layout the tables with the jquery datatable plugin.
 			$(document).ready(function() {
-				updateTableLayout();
 			});
 
-			function updateTable(e) {
-				if (e.status == 'success') {
-					$('.imixsdatatable').layoutImixsTable()
+			function deleteDocument(id) {
+				if (!confirm('Are you sure?\nDelete Entity ' + id + ' now?')) {
+					return false;
 				}
-			}
-
-			function updateTableLayout() {
-
-				$('[id$=imixsdatatable]').each(function() {
-					// with the following line we test if the jsf datatable realy contains data 
-					// in cases with empty rows on default column is displayed.
-					if ($('tbody tr:nth-child(1) td', $(this)).length > 1)
-						$(this).dataTable({
-							"bRetrieve" : true,
-							"iDisplayLength" : 30,
-							"bLengthChange" : false,
-							"bSortable" : false,
-							"bJQueryUI" : true,
-							'aaSorting' : []
-						// no inital sorting 						
-						});
-				});
-
+				// delete...
+				document.location.href="#{facesContext.externalContext.requestContextPath}/app/teams/delete/"+id;
 			}
 			/*]]>*/
 		</script>
@@ -44,48 +24,47 @@
 
 		<div class="imixs-form">
 			<div class="imixs-header">
-				<h1><span class="typcn typcn-group-outline"></span>Teams</h1>
+				<h1>
+					<span class="typcn typcn-group-outline"></span>Teams
+				</h1>
 			</div>
 			<div class="imixs-body">
 				<div class="imixs-form-panel">
 					<div class="imixs-form-section">
-						<TABLE id="imixsdatatable" class="imixsdatatable">
+						<table id="imixsdatatable" class="imixsdatatable">
 							<tr>
 								<th>#{message.name}</th>
 								<th>#{message.modified}</th>
-								<th>ID</th>
+								<th>Action</th>
 							</tr>
-							<ui:repeat var="record" value="#{teamController.documents}">
+							<ui:repeat var="record" value="#{model.teams}">
 								<tr>
 									<td>#{record.item['txtName']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/teams/#{record.item['$uniqueid']}"
-										title="#{record.item['$uniqueid']}">edit</a></td>
+										href="#{facesContext.externalContext.requestContextPath}/app/teams/edit/#{record.item['$uniqueid']}"
+										title="#{record.item['$uniqueid']}"><span
+											class="typcn typcn-edit"></span>#{message.edit}</a> | <a href="#"
+										onclick="deleteDocument('#{record.item['$uniqueid']}')"
+										title="#{record.item['$uniqueid']}"><span
+											class="typcn typcn-trash" title="#{message.delete}"></span>#{message.delete}</a>
+
+									</td>
 								</tr>
 							</ui:repeat>
-						</TABLE>
+						</table>
 
 						<hr />
-						<form
-							action="#{facesContext.externalContext.requestContextPath}/app/teams"
-							method="post">
-							<input type="submit" value="#{message.add}" />
-							<a class="imixs-button" href="#{facesContext.externalContext.requestContextPath}/app/home">close</a>
-							
-							
-						</form>
 
-
+						<a class="imixs-button"
+							href="#{facesContext.externalContext.requestContextPath}/app/teams/create">#{message.add}</a>
+						<a class="imixs-button"
+							href="#{facesContext.externalContext.requestContextPath}/app/home">#{message.close}</a>
 
 					</div>
 				</div>
 			</div>
-
-			
 		</div>
-
-
 
 	</ui:define>
 </ui:composition>

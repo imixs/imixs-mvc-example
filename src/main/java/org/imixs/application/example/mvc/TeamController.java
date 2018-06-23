@@ -1,44 +1,105 @@
 package org.imixs.application.example.mvc;
 
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.mvc.annotation.Controller;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 
 import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.mvc.controller.DocumentController;
 import org.imixs.workflow.mvc.controller.WorkitemEvent;
 
 /**
- * Controller to manage active imixs-workflow instances.
+ * The TeamController manages the creation, save and editing of team instances
+ * under the resource /teams. The controller inject the CDI-Model bean to store
+ * a team instance during a request. The controller extends the
+ * org.imixs.workflow.mvc.controller.DocumentController
  * 
  * @author rsoika
  *
  */
 @Controller
 @Path("teams")
-@Named
 public class TeamController extends DocumentController {
 
 	private static Logger logger = Logger.getLogger(TeamController.class.getName());
 
+	@Inject
+	Model model;
+
+
 	/**
-	 * Initialize TeamController
+	 * load list of teams (default resource).
+	 * 
+	 * @return teams.xhtml
 	 */
-	public TeamController() {
-		super();
-		setDocumentType("team");
-		setDocumentView("team.xhtml");
-		setDocumentsView("teams.xhtml");
+	@GET
+	public String showTeams() {
+		model.setTeams(super.findDocumentsByType("team"));
+		return "teams.xhtml";
 	}
 
 	/**
-	 * WorkItemEvent listener to convert team item
+	 * create new team...
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("create")
+	public String createNewTicket() {
+		logger.fine("create new team...");
+		model.setTeam(super.createDocument("team"));
+		return "team.xhtml";
+	}
+
+	/**
+	 * load team
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	@GET
+	@Path("edit/{uniqueid}")
+	public String editTicket(@PathParam("uniqueid") String uid) {
+
+		logger.fine("load team...");
+		model.setTeam(super.findDocumentByUnqiueID(uid));
+		return "team.xhtml";
+	}
+	
+
+	@GET
+	@Path("/delete/{uniqueid}")
+	public String actionDeleteDocument(@PathParam("uniqueid") String uniqueid) {
+		logger.finest("......delete document: " + uniqueid);
+		this.documentService.remove(super.findDocumentByUnqiueID(uniqueid));
+		return "redirect:teams/";
+	}
+	
+	@POST
+	@Path("{uniqueid}")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	public String saveTeam(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
+		model.setTeam(super.saveDocument(uid, requestBodyStream));
+		// update teams....
+		model.setTeams(super.findDocumentsByType("team"));
+		return "teams.xhtml";
+	}
+
+
+
+	/**
+	 * WorkItemEvent listener to convert team item into a multi value list
 	 * 
 	 * @param workitemEvent
 	 * @throws AccessDeniedException

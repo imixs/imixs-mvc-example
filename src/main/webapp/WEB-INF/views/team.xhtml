@@ -6,16 +6,14 @@
 
 	<ui:define name="content">
 
-
-		<h1><span class="typcn typcn-group-outline"></span>#{message.team_form_title}</h1>
-
-		<!-- **** General info ***** -->
+		<h1>
+			<span class="typcn typcn-group-outline"></span>#{message.team_form_title}
+		</h1>
 		<h2>#{message.edit}</h2>
-
 
 		<!--  Team Form -->
 		<form
-			action="#{facesContext.externalContext.requestContextPath}/app/teams/#{teamController.workitem.uniqueID}"
+			action="#{facesContext.externalContext.requestContextPath}/app/teams/#{model.team.uniqueID}"
 			method="post">
 
 			<div class="imixs-form-section">
@@ -23,34 +21,25 @@
 					<dt>#{message.name}:</dt>
 					<dd>
 						<input type="text" style="width: 20em;"
-							value="#{teamController.workitem.item['txtname']}" name="txtname" />
+							value="#{model.team.item['txtname']}" name="txtname" />
 					</dd>
 
 					<dt>#{message.members}:</dt>
 					<dd>
-						<textarea name="members">#{teamController.workitem.item['members']}</textarea>
+						<textarea name="members">#{model.team.item['members']}</textarea>
 					</dd>
 				</dl>
 			</div>
 
 			<!-- **** save Actions & History ***** -->
-
 			<h3>#{message.workflow}</h3>
-
 			<input type="submit" name="save-team" value="#{message.save}" /> <a
 				class="imixs-button"
 				href="#{facesContext.externalContext.requestContextPath}/app/home">close</a>
 
+			<!-- hidden fields -->
+			<input type="hidden" name="type" value="#{model.team.item['type']}" />
 		</form>
-
-
-
-
-
-
-
 	</ui:define>
-
-
 
 </ui:composition>

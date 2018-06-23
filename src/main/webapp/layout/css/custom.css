@@ -30,6 +30,11 @@ body, html {
 	min-height: 100%;
 }
 
+
+#imixs-content .typcn {
+	margin-right:5px;
+}
+
 #imixs-content h1 .typcn {
 	margin-right:10px;
 }
