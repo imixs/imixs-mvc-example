@@ -3,13 +3,18 @@
 The Imixs-mvc-example provides a example of a MVC 1.0 web application integrating the Imixs-Workflow engine.
 You can take this application as a scaffolding for your own web business application based on the [Imixs-Workflow project](http://www.imixs.org).
 
+
+
+<img src="ticket-app.png">
+
+
 ## Build the Application
 
 The application is based on Maven. To build the application artifact form sources run:
 
 	$ mvn clean install
 
-## ozark-resteasy
+### ozark-resteasy
 
 The example is developed against the application server wildfly. As [MVC 1.0 implementation Ozark](https://github.com/mvc-spec/ozark) is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. This is done by the following additional maven dependency:
 
@@ -19,7 +24,9 @@ The example is developed against the application server wildfly. As [MVC 1.0 imp
 		<version>1.0.0-m03</version>
 	</dependency>
 		
-To build the applicaiton for Glassfish/Payara use the corresponding jersey dependency:
+### ozark-jersey
+
+To build the application for Glassfish/Payara use the corresponding jersey dependency:
 
 	<dependency>
 		<groupId>org.mvc-spec.ozark</groupId> 
@@ -29,7 +36,7 @@ To build the applicaiton for Glassfish/Payara use the corresponding jersey depen
 	
 
 
-<br><br><img src="small_h-trans.png">
+<br><img src="small_h-trans.png">
 
 
 The Imixs-MVC-Example includes a Docker Container to run the sample application in a Docker container. 
@@ -53,12 +60,10 @@ After you have created the docker image, you can start the application. The work
 
 See the docker-compose.yml file for details,
 
-Youc an start the application form your web browser:
+You can start the application form your web browser:
 
 	http://localhost:8080/workflow/
 
-
-<img src="ticket-app.png">
 
 The example application provides the following test users:
 
