@@ -5,7 +5,7 @@ You can take this application as a scaffolding for your own web business applica
 
 
 
-<img width="80%" src="ticket-app.png">
+<center><img width="80%" src="ticket-app.png"></center>
 
 
 ## Build the Application
