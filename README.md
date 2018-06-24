@@ -1,11 +1,10 @@
 # imixs-mvc-example
 
-The Imixs-mvc-example provides a example of a MVC 1.0 web application integrating the Imixs-Workflow engine.
+The Imixs-mvc-example provides a MVC 1.0 web application integrating the Imixs-Workflow engine.
 You can take this application as a scaffolding for your own web business application based on the [Imixs-Workflow project](http://www.imixs.org).
 
 
-
-<center><img width="80%" src="ticket-app.png"></center>
+<img width="80%" src="ticket-app.png">
 
 
 ## Build the Application
