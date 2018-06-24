@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.imixs.workflow.ItemCollection;
@@ -17,7 +19,6 @@ import org.imixs.workflow.ItemCollectionComparator;
 import org.imixs.workflow.engine.WorkflowService;
 import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.exceptions.ModelException;
-import org.imixs.workflow.mvc.controller.WorkitemEvent;
 
 /**
  * CDI-Model holds team and workitem value objects.
@@ -39,6 +40,11 @@ public class Model implements Serializable {
 	ItemCollection workitem;
 	List<org.imixs.workflow.ItemCollection> tasklist;
 
+	
+	@Inject
+	protected Event<ModelEvent> events;
+
+	
 	@EJB
 	WorkflowService workflowService;
 
@@ -51,11 +57,13 @@ public class Model implements Serializable {
 	}
 
 	public ItemCollection getTeam() {
+		
 		return team;
 	}
 
 	public void setTeam(ItemCollection team) {
 		this.team = team;
+		events.fire(new ModelEvent(this.team, ModelEvent.WORKITEM_CHANGED));
 	}
 
 	public List<org.imixs.workflow.ItemCollection> getTeams() {
@@ -115,7 +123,7 @@ public class Model implements Serializable {
 	 * @throws AccessDeniedException
 	 */
 	@SuppressWarnings("unchecked")
-	public void onWorkflowEvent(@Observes WorkitemEvent workitemEvent) throws AccessDeniedException {
+	public void onWorkflowEvent(@Observes ModelEvent workitemEvent) throws AccessDeniedException {
 		if (workitemEvent == null || workitemEvent.getWorkitem() == null) {
 			return;
 		}
@@ -125,7 +133,7 @@ public class Model implements Serializable {
 		// convert team member list...
 		if (workitemEvent.getWorkitem().getItemValueString("type").startsWith("team")) {
 
-			if (WorkitemEvent.WORKITEM_CHANGED == eventType) {
+			if (ModelEvent.WORKITEM_CHANGED == eventType) {
 				// convert list to string with newlines
 				List<String> members = workitemEvent.getWorkitem().getItemValue("members");
 				String result = "";
@@ -135,7 +143,7 @@ public class Model implements Serializable {
 				workitemEvent.getWorkitem().replaceItemValue("members", result);
 			}
 
-			if (WorkitemEvent.WORKITEM_BEFORE_SAVE == eventType) {
+			if (ModelEvent.WORKITEM_BEFORE_SAVE == eventType) {
 				// convert input string with newlines into a list
 				String value = workitemEvent.getWorkitem().getItemValueString("members");
 				workitemEvent.getWorkitem().replaceItemValue("members", Arrays.asList(value.split("\\r?\\n")));

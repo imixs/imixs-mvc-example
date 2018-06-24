@@ -3,6 +3,8 @@ package org.imixs.application.example.mvc;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import javax.ejb.EJB;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.mvc.annotation.Controller;
 import javax.ws.rs.Consumes;
@@ -12,7 +14,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.imixs.workflow.mvc.controller.DocumentController;
+import org.imixs.workflow.ItemCollection;
+import org.imixs.workflow.WorkflowKernel;
+import org.imixs.workflow.engine.DocumentService;
+import org.imixs.workflow.jaxrs.WorkflowRestService;
 
 /**
  * The TeamController manages the creation, save and editing of team instances
@@ -23,14 +28,22 @@ import org.imixs.workflow.mvc.controller.DocumentController;
  * @author rsoika
  *
  */
-@Controller
+@Controller 
 @Path("teams")
-public class TeamController extends DocumentController {
+public class TeamController {
 
 	private static Logger logger = Logger.getLogger(TeamController.class.getName());
 
 	@Inject
 	Model model;
+	
+
+	@Inject
+	protected Event<ModelEvent> events;
+
+	
+	@EJB
+	protected DocumentService documentService;
 
 
 	/**
@@ -40,26 +53,37 @@ public class TeamController extends DocumentController {
 	 */
 	@GET
 	public String showTeams() {
-		model.setTeams(super.findDocumentsByType("team"));
+		model.setTeams(documentService.getDocumentsByType("team"));
 		return "teams.xhtml";
 	}
 
 
 	/**
-	 * create new team...
+	 * Creates a new instance of an Imixs ItemCollection with a $uniqueID and the
+	 * specified type property. The method also fires a CDI event to allow other CDI
+	 * beans to intercept the creation method.
 	 * 
-	 * @return
+	 * @param type
+	 * @return instance of ItemCollection
 	 */
 	@GET
 	@Path("create")
 	public String createNewTicket() {
 		logger.fine("create new team...");
-		model.setTeam(super.createDocument("team"));
+		
+		String uid = WorkflowKernel.generateUniqueID();
+		logger.info("......create new document: " + uid);
+		ItemCollection workitem = new ItemCollection();
+		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+		workitem.replaceItemValue("type", "team");
+		events.fire(new ModelEvent(workitem, ModelEvent.WORKITEM_CREATED));
+		
+		model.setTeam(workitem);
 		return "team.xhtml";
 	}
 
 	/**
-	 * load team
+	 * Finds an instance of ItemCollection by $uniqueID.
 	 * 
 	 * @param uid
 	 * @return
@@ -69,7 +93,7 @@ public class TeamController extends DocumentController {
 	public String editTicket(@PathParam("uniqueid") String uid) {
 
 		logger.fine("load team...");
-		model.setTeam(super.findDocumentByUnqiueID(uid));
+		model.setTeam(documentService.load(uid));
 		return "team.xhtml";
 	}
 	
@@ -78,7 +102,7 @@ public class TeamController extends DocumentController {
 	@Path("/delete/{uniqueid}")
 	public String actionDeleteDocument(@PathParam("uniqueid") String uniqueid) {
 		logger.finest("......delete document: " + uniqueid);
-		this.documentService.remove(super.findDocumentByUnqiueID(uniqueid));
+		this.documentService.remove(documentService.load(uniqueid));
 		return "redirect:teams/";
 	}
 	
@@ -93,10 +117,30 @@ public class TeamController extends DocumentController {
 	@Path("{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public String saveTeam(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
-		model.setTeam(super.saveDocument(uid, requestBodyStream));
-		// update teams....
-		model.setTeams(super.findDocumentsByType("team"));
-		return "teams.xhtml";
+		// parse the workItem.
+		ItemCollection document = WorkflowRestService.parseWorkitem(requestBodyStream);
+		document.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+
+		// try to load current instance of this document entity
+		ItemCollection currentInstance = documentService.load(uid);
+		if (currentInstance != null) {
+			// merge entity into current instance
+			// an instance of this Entity still exists! so we update the
+			// new values here....
+			currentInstance.replaceAllItems(document.getAllItems());
+			document = currentInstance;
+		}
+
+		// save workItem ...
+		logger.info("......save document uniqueid=" + uid);
+		events.fire(new ModelEvent(document, ModelEvent.WORKITEM_BEFORE_SAVE));
+		document = documentService.save(document);
+		events.fire(new ModelEvent(document, ModelEvent.WORKITEM_AFTER_SAVE));
+		logger.finest("......ItemCollection saved");
+		model.setTeam(document);
+		
+		
+		return "redirect:teams";
 	}
 
 

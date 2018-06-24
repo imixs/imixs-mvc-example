@@ -3,6 +3,8 @@ package org.imixs.application.example.mvc;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import javax.ejb.EJB;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.mvc.annotation.Controller;
 import javax.ws.rs.Consumes;
@@ -12,11 +14,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.imixs.workflow.ItemCollection;
+
+import org.imixs.workflow.WorkflowKernel;
+import org.imixs.workflow.engine.ModelService;
+import org.imixs.workflow.engine.WorkflowService;
 import org.imixs.workflow.exceptions.AccessDeniedException;
 import org.imixs.workflow.exceptions.ModelException;
 import org.imixs.workflow.exceptions.PluginException;
 import org.imixs.workflow.exceptions.ProcessingErrorException;
-import org.imixs.workflow.mvc.controller.WorkflowController;
+import org.imixs.workflow.jaxrs.WorkflowRestService;
 
 /**
  * Controller to manage active imixs-workflow instances.
@@ -26,48 +33,21 @@ import org.imixs.workflow.mvc.controller.WorkflowController;
  */
 @Controller
 @Path("ticket")
-public class TicketController extends WorkflowController {
+public class TicketController { // extends WorkflowController
 
 	private static Logger logger = Logger.getLogger(TicketController.class.getName());
 
 	@Inject
-	Model model;
+	org.imixs.application.example.mvc.Model model;
 
-	/**
-	 * load task list for the current user
-	 * 
-	 * @return tasklist.xhtml
-	 */
-	@GET
-	@Path("tasklist")
-	public String showTaskList() {
-		model.setTasklist(super.getTaskList());
-		return "tasklist.xhtml";
-	}
+	@Inject
+	protected Event<ModelEvent> events;
 
-	/**
-	 * load status list of current user
-	 * 
-	 * @return statuslist.xhtml
-	 */
-	@GET
-	@Path("statuslist")
-	public String showStatuslist() {
-		model.setTasklist(super.getStatusList());
-		return "statuslist.xhtml";
-	}
+	@EJB
+	protected ModelService modelService;
 
-	/**
-	 * load list of archived workitem
-	 * 
-	 * @return statuslist.xhtml
-	 */
-	@GET
-	@Path("archive")
-	public String showArchive() {
-		model.setTasklist(super.getArchive());
-		return "statuslist.xhtml";
-	}
+	@EJB
+	WorkflowService workflowService;
 
 	/**
 	 * Create a new ticket.
@@ -80,11 +60,14 @@ public class TicketController extends WorkflowController {
 	@Path("{modelversion}/{taskid}")
 	public String createNewTicket(@PathParam("modelversion") String modelversion, @PathParam("taskid") String taskid) {
 		logger.fine("...create ticket");
-		try {
-			model.setWorkitem(super.createWorkitem(modelversion, taskid));
-		} catch (ModelException e) {
-			logger.severe("Unable to create new Ticket instance: " + e.getMessage());
-		}
+		ItemCollection workitem = null;
+		int iTask = Integer.parseInt(taskid);
+		String uid = WorkflowKernel.generateUniqueID();
+		workitem = new ItemCollection().model(modelversion).task(iTask);
+		workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+		workitem.replaceItemValue("type", "workitem");
+		events.fire(new ModelEvent(workitem, ModelEvent.WORKITEM_CREATED));
+		model.setWorkitem(workitem);
 		return "ticket.xhtml";
 	}
 
@@ -97,9 +80,10 @@ public class TicketController extends WorkflowController {
 	@GET
 	@Path("edit/{uniqueid}")
 	public String editTicket(@PathParam("uniqueid") String uid) {
-
 		logger.fine("load ticket...");
-		model.setWorkitem(super.findWorkitemByUnqiueID(uid));
+		ItemCollection workitem = workflowService.getWorkItem(uid);
+		model.setWorkitem(workitem);
+		events.fire(new ModelEvent(workitem, ModelEvent.WORKITEM_CHANGED));
 		return "ticket.xhtml";
 	}
 
@@ -114,19 +98,61 @@ public class TicketController extends WorkflowController {
 	@Path("{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public String processTicket(@PathParam("uniqueid") String uid, InputStream requestBodyStream) {
+		ItemCollection workitem = null;
 		try {
-			model.setWorkitem(super.processWorkitem(uid, requestBodyStream));
+			// process the workItem.
+			workitem = WorkflowRestService.parseWorkitem(requestBodyStream);
+			workitem.replaceItemValue(WorkflowKernel.UNIQUEID, uid);
+			workitem = workflowService.processWorkItem(workitem);
+			model.setWorkitem(workitem);
 		} catch (AccessDeniedException | ProcessingErrorException | PluginException | ModelException e) {
 			logger.severe("Unable to process Ticket instance: " + e.getMessage());
 		}
 
 		// compute workflow result (see the workflow model for details)
-		String result = model.getWorkitem().getItemValueString("action");
+		String result = workitem.getItemValueString("action");
 		if (result.isEmpty()) {
 			result = "ticket.xhtml";
 		}
-		logger.info("...workflow result => " + result);
+		logger.finest("...workflow result => " + result);
+
 		return result;
+	}
+
+	/**
+	 * load task list for the current user
+	 * 
+	 * @return tasklist.xhtml
+	 */
+	@GET
+	@Path("tasklist")
+	public String showTaskList() {
+		model.setTasklist(workflowService.getWorkListByAuthor(null, "workitem", 30, 0, "$modified", true));
+		return "tasklist.xhtml";
+	}
+
+	/**
+	 * load status list of current user
+	 * 
+	 * @return statuslist.xhtml
+	 */
+	@GET
+	@Path("statuslist")
+	public String showStatuslist() {
+		model.setTasklist(workflowService.getWorkListByCreator(null, "workitem", 30, 0, "$modified", true));
+		return "statuslist.xhtml";
+	}
+
+	/**
+	 * load list of archived workitem
+	 * 
+	 * @return statuslist.xhtml
+	 */
+	@GET
+	@Path("archive")
+	public String showArchive() {
+		model.setTasklist(workflowService.getDocumentService().getDocumentsByType("workitemarchive"));
+		return "statuslist.xhtml";
 	}
 
 }

@@ -1,69 +1,79 @@
 # imixs-mvc-example
 
-#### NOTE: THIS IS AN EARLY DRAFT VERSION 
-
-The Imixs-mvc-example provides a simple web application using the Imixs-Workflow engine.
+The Imixs-mvc-example provides a example of a MVC 1.0 web application integrating the Imixs-Workflow engine.
 You can take this application as a scaffolding for your own web business application based on the [Imixs-Workflow project](http://www.imixs.org).
 
-## Run on Wildfly
+## Build the Application
 
-This project is based on wildfly. As [Ozark](https://github.com/mvc-spec/ozark) is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. The deployment is described [here](ozark_wildfly.md).
+The application is based on Maven. To build the application artifact form sources run:
 
-Find also additional help here:  
+	$ mvn clean install
 
-	http://javaakademie.de/blog/java-ee-8-mvc-ozark-wildfly-tomcat
+## ozark-resteasy
+
+The example is developed against the application server wildfly. As [MVC 1.0 implementation Ozark](https://github.com/mvc-spec/ozark) is based on Jersey, the web application need to replace the Wildly RestEasy implementation with the Jersey implementation of JAX-RS. This is done by the following additional maven dependency:
+
+	<dependency>
+		<groupId>org.mvc-spec.ozark</groupId>
+		<artifactId>ozark-resteasy</artifactId>
+		<version>1.0.0-m03</version>
+	</dependency>
+		
+To build the applicaiton for Glassfish/Payara use the corresponding jersey dependency:
+
+	<dependency>
+		<groupId>org.mvc-spec.ozark</groupId> 
+		<artifactId>ozark-jersey</artifactId> 
+		<version>1.0.0-m03</version> 
+	</dependency> 		
 	
-	
-## 1. Build the Application
-
-The Imixs-mvc-example  is based on Maven to build the project from sources run
-
-    mvn clean install -Pdocker-build
-    
-You can also download the application from the [latest release](https://github.com/imixs/imixs-mvc-example/releases).    
-
-## 2. Starting the Application in a Docker Container
-
-After you have build the application and the Docker image you can start the application. The workflow engine needs a SQL Database. Both containers can be started with one docker-compose command
-
-	docker-compose up
-	
-
-## 3. Run the Application
-After deployment you can start the sample application from:
-
-	http://localhost:8080/workflow/api/hello
-
-
 
 
 <br><br><img src="small_h-trans.png">
 
 
-The Imixs-JSF-Example includes a Docker Container to run the sample application in a Docker container. 
+The Imixs-MVC-Example includes a Docker Container to run the sample application in a Docker container. 
 The docker image is based on the docker image [imixs/wildfly](https://hub.docker.com/r/imixs/wildfly/).
 
-To run Sample Application in a Docker container, the container need to be linked to a postgreSQL database container. The database connection is configured in the Wildfly standalone.xml file and can be customized to any other database system. 
+To run the MVC Sample Application in a Docker container, the container need to be linked to a postgreSQL database container. The database connection is configured in the Wildfly standalone.xml file and can be customized to any other database system. 
 
-## 1. Build the Application
-Before you can start the container, build the application from sources
+## 1. Build the Docker Image
+
+To build the application together with the docker container run:
 
 
-	mvn clean install
-	
-## 2. Build the Docker Image
+	$ mvn clean install -Pdocker-build
 
-After you have build the application, you can build the Docker image with the following command:
-
-	docker build --tag=imixs/imixs-mvc-sample .
  
-## 3. Starting the Application in a Docker Container
+## 2. Start the Application in a Docker Container
 
-Now you can start the application. The workflow engine needs a SQL Database. Both containers can be started with one docker-compose command
+After you have created the docker image, you can start the application. The workflow engine needs a SQL Database. The project contains a pre-configured docker-compose file to start both containers:
 
-	docker-compose up
+	$ docker-compose up
 
-See the docker-compose.yml file for details
+See the docker-compose.yml file for details,
+
+Youc an start the application form your web browser:
+
+	http://localhost:8080/workflow/
+
+The example application provides the following test users:
+
+	
+	
+## 3. Upload the BPMN Model:
+
+The application provides an example BPMN model "ticket". The BPMN Model is part of the project and located under /src/workflow/ticket.bpmn
+
+<br><br><img src="model-ticket.png">
+
+Before you can create a new ticket within the application, make sure that you have uploaded the ticket BPMN model. To upload the model use the CURL command:
+
+	curl --user admin:adminpassword --request POST -Tsrc/workflow/ticket.bpmn http://localhost:8080/workflow/app/model/bpmn
+
+After you have uploaded the ticket workflow model you can create a team and than start the ticket workflow.
+
+
 
 ## Development
 
@@ -74,18 +84,4 @@ During development you can use the docker-compose-dev.yml file. This stack maps 
 you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
 
 	$ sudo chmod 777 src/docker/deployments/
-
-	
-	
-## Upload the BPMN Model:
-
-After you have successful deployed your application you can upload the Ticket workflow model via the [Imixs-REST Service API](http://www.imixs.org/doc/restapi/index.html). 
-
-<br><br><img src="model-ticket.png">
-
-Use the following curl command to upload the model from your workspace:
-
-    curl --user admin:adminpassword --request POST -Tsrc/workflow/ticket.bpmn http://localhost:8080/app/model/bpmn
-
-The BPMN Model is part of the project and located under /src/workflow/ticket.bpmn
 	
