@@ -57,7 +57,21 @@ Youc an start the application form your web browser:
 
 	http://localhost:8080/workflow/
 
+
+<img src="ticket-app.png">
+
 The example application provides the following test users:
+
+| User    	| Role 					  | Password |
+|-----------|-------------------------|----------|
+| admin 	| IMIXS-WORKFLOW-Manager  | admin    |
+| alex 		| IMIXS-WORKFLOW-Manager  | alex    |
+| marty 	| IMIXS-WORKFLOW-Author   | marty    |
+| melman 	| IMIXS-WORKFLOW-Author   | melman    |
+| gloria 	| IMIXS-WORKFLOW-Author   | gloria    |
+| skipper 	| IMIXS-WORKFLOW-Author   | skipper    |
+| private 	| IMIXS-WORKFLOW-Author   | private    |
+| rico 		| IMIXS-WORKFLOW-Author   | rico    |
 
 	
 	
@@ -65,7 +79,7 @@ The example application provides the following test users:
 
 The application provides an example BPMN model "ticket". The BPMN Model is part of the project and located under /src/workflow/ticket.bpmn
 
-<br><br><img src="model-ticket.png">
+<img src="ticket-model.png">
 
 Before you can create a new ticket within the application, make sure that you have uploaded the ticket BPMN model. To upload the model use the CURL command:
 
