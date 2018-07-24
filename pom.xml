@@ -48,6 +48,8 @@
 		<custom.unpackTypes>war</custom.unpackTypes>
 		<lucene.version>6.6.1</lucene.version>
 		<github.global.server>imixs-github-repo</github.global.server>
+		<ozark.implementation>ozark-resteasy</ozark.implementation>
+		<ozark.version>1.0.0-m03</ozark.version>
 	</properties>
 	
 	
@@ -174,19 +176,13 @@
 			<artifactId>javax.mvc-api</artifactId>
 			<version>1.0-pr</version>
 		</dependency>
+
+		<!-- Ozark implementation (depends on maven profile - default is restEasy -->
 		<dependency>
 			<groupId>org.mvc-spec.ozark</groupId>
-			<artifactId>ozark-resteasy</artifactId>
-			<version>1.0.0-m03</version>
+			<artifactId>${ozark.implementation}</artifactId>
+			<version>${ozark.version}</version>
 		</dependency>
-		<!-- DaraStax Java Driver -->
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>3.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-
 
 		<!-- Apache Lucene -->
 		<dependency>
